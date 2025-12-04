@@ -1,0 +1,1991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLASH | Pro Terminal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        :root {
+            /* MODERN DARK PALETTE */
+            --bg-body: #09090b;
+            --bg-surface: #0f0f12;
+            --bg-hover: #18181b;
+            --bg-elevated: #1f1f23;
+            --line: #27272a;
+            --line-bright: #3f3f46;
+
+            --text-main: #fafafa;
+            --text-sec: #a1a1aa;
+            --text-ter: #52525b;
+
+            /* ACCENTS */
+            --green: #22c55e;
+            --green-dim: rgba(34, 197, 94, 0.1);
+            --red: #ef4444;
+            --red-dim: rgba(239, 68, 68, 0.1);
+            --blue: #3b82f6;
+            --amber: #f59e0b;
+            
+            --radius: 8px;
+            --radius-sm: 4px;
+            --radius-lg: 12px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* --- 1. MODERN NAV --- */
+        nav {
+            height: 64px; 
+            background: rgba(9, 9, 11, 0.95); /* Solid/Dark */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: stretch;
+            justify-content: space-between;
+            padding: 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .nav-left-group {
+            display: flex;
+            align-items: stretch;
+        }
+
+        .brand {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-main); 
+            cursor: pointer;
+            padding: 0 32px;
+            border-right: 1px solid var(--line);
+            letter-spacing: -0.5px;
+            transition: background 0.2s ease;
+        }
+        .brand:hover { background: var(--bg-hover); }
+        .brand span { color: var(--text-ter); font-weight: 400; } 
+
+        /* Nav Links */
+        .user-nav { 
+            display: flex; 
+            align-items: stretch;
+        }
+        .user-nav a { 
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            color: var(--text-sec); 
+            text-decoration: none; 
+            transition: all 0.2s ease; 
+            cursor: pointer; 
+            border-right: 1px solid var(--line);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            position: relative;
+        }
+        .user-nav a:hover { 
+            color: var(--text-main); 
+            background: var(--bg-hover);
+        }
+        .user-nav a.active { 
+            color: var(--text-main); 
+            background: var(--bg-surface);
+            box-shadow: inset 0 -2px 0 var(--green);
+        }
+
+        /* Right Actions */
+        .nav-right {
+            display: flex;
+            align-items: stretch;
+        }
+        .nav-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 28px;
+            border-left: 1px solid var(--line);
+            color: var(--text-sec);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .nav-action:hover { 
+            background: var(--bg-hover); 
+            color: var(--text-main);
+        }
+
+        /* Asset Menu */
+        .asset-menu {
+            position: absolute;
+            top: 64px; 
+            left: 0;
+            right: 0;
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-sizing: border-box;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        .asset-item {
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--line);
+            color: var(--text-sec);
+            font-family: 'JetBrains Mono';
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+        }
+        .asset-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-main);
+        }
+        .asset-item:last-child { border: none; }
+
+        .nav-chart-btn {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-sec);
+            font-size: 13px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            padding: 0 16px;
+            transition: color 0.2s;
+        }
+        .nav-chart-btn:hover { color: var(--text-main); }
+
+        .asset-icon {
+            width: 8px; height: 8px; 
+            border-radius: 50%; 
+            background: currentColor; 
+            opacity: 0.5;
+        }
+
+        .currency-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono';
+            font-size: 9px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .currency-icon.btc { background: #F7931A; color: #000; }
+        .currency-icon.sol { background: #9945FF; color: #fff; }
+        .currency-icon.eth { background: #627EEA; color: #fff; }
+        .currency-icon.hype { background: #00FF9D; color: #000; }
+
+        /* --- 4. MODERN LAYOUT --- */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 32px;
+            padding: 24px 24px;
+            width: 100%;
+            max-width: 1800px;
+            margin: 0 auto;
+            box-sizing: border-box;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Center Column */
+        .center-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: hidden; /* Prevent scroll here, handle in children if needed */
+            padding-right: 0;
+            min-height: 0;
+            transition: all 0.3s ease;
+        }
+        /* .center-column::-webkit-scrollbar { width: 0; } */
+
+        /* Game Stage */
+        .game-stage {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 12px; /* Tighter gap */
+            width: 100%;
+            min-height: 420px;
+            flex: 0 0 auto;
+        }
+
+        /* Cards */
+        .game-card {
+            flex: 1;
+            min-width: 280px;
+            max-width: none;
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* States */
+        .game-card.prev { 
+            opacity: 0.5; 
+            transform: scale(0.98);
+            border-style: dashed;
+        }
+        .game-card.prev:hover { opacity: 0.8; border-style: solid; }
+
+        /* Recent Activity List */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            transition: all 0.2s;
+        }
+        .activity-item:hover {
+            border-color: var(--line-bright);
+            transform: translateX(4px);
+        }
+        .act-icon {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: var(--bg-elevated);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+        }
+        .act-content { flex: 1; font-size: 13px; color: var(--text-sec); }
+        .act-content strong { color: var(--text-main); font-weight: 600; }
+        .act-time { font-size: 11px; color: var(--text-ter); font-family: 'JetBrains Mono'; }
+
+        /* PODIUM & TABLE */
+        .podium-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        .podium-card:hover { transform: translateY(-4px); border-color: var(--line-bright); }
+        
+        .podium-card.winner {
+            border-color: var(--amber);
+            background: linear-gradient(to bottom, rgba(245, 158, 11, 0.1), var(--bg-surface));
+            z-index: 2;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.1);
+        }
+        .pc-rank { font-size: 12px; font-weight: 700; color: var(--text-ter); letter-spacing: 1px; }
+        .pc-avatar { font-size: 48px; margin: 8px 0; }
+        .pc-name { font-weight: 700; color: var(--text-main); font-size: 16px; }
+        .pc-profit { color: var(--green); font-family: 'JetBrains Mono'; font-weight: 700; font-size: 14px; }
+        .pc-crown { font-size: 32px; position: absolute; top: -20px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
+
+        .terminal-table {
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background: var(--bg-surface);
+        }
+        .tt-head {
+            display: flex;
+            padding: 16px 24px;
+            background: var(--bg-hover);
+            border-bottom: 1px solid var(--line);
+            font-family: 'JetBrains Mono';
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-sec);
+            letter-spacing: 1px;
+        }
+        .tt-row {
+            display: flex;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--line);
+            font-family: 'JetBrains Mono';
+            font-size: 13px;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        .tt-row:last-child { border-bottom: none; }
+        .tt-row:hover { background: var(--bg-hover); }
+
+        /* History / Leaderboard Rows */
+        .lb-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 4px;
+            background: var(--bg-surface);
+            font-size: 12px;
+            font-family: 'JetBrains Mono';
+            border-bottom: 1px solid var(--bg-body);
+        }
+        .lb-row:last-child { border-bottom: none; }
+        .lb-row:hover { background: var(--bg-hover); }
+        
+        .lb-round { color: var(--text-ter); width: 40px; }
+        .lb-asset { font-weight: 700; width: 40px; }
+        .lb-dir { font-weight: 700; width: 40px; }
+        .lb-dir.up { color: var(--green); }
+        .lb-dir.down { color: var(--red); }
+        .lb-result { flex: 1; text-align: right; }
+        .lb-result.win { color: var(--green); }
+        .lb-result.loss { color: var(--red); }
+
+        /* Right Sidebar */
+        .right-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 4px;
+            transition: all 0.3s ease;
+        }
+        .right-sidebar::-webkit-scrollbar { width: 4px; }
+        .right-sidebar::-webkit-scrollbar-thumb { background: var(--line); border-radius: 2px; }
+
+        .sidebar-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        /* Wallet Button */
+        .btn-wallet {
+            background: var(--text-main);
+            color: var(--bg-body);
+            font-family: 'JetBrains Mono';
+            font-weight: 700;
+            font-size: 12px;
+            padding: 0 24px;
+            height: 36px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-wallet:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .btn-wallet.connected {
+            background: var(--bg-elevated);
+            color: var(--green);
+            border: 1px solid var(--line-bright);
+        }
+
+        /* Wallet Menu */
+        .wallet-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            border-radius: 0 0 var(--radius) var(--radius);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Profile Stats */
+        .p-stat-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--line);
+            padding: 12px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .ps-label { font-size: 10px; color: var(--text-sec); margin-bottom: 4px; }
+        .ps-val { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 16px; color: var(--text-main); }
+        .ps-val.gold { color: var(--amber); }
+
+        /* Card Internals */
+        .gc-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--bg-hover);
+        }
+
+        .header-btn {
+            background: var(--bg-body);
+            border: 1px solid var(--active-color, var(--text-main));
+            color: var(--active-color, var(--text-main));
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-family: 'JetBrains Mono';
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s ease;
+            letter-spacing: 0.5px;
+        }
+        .header-btn:hover {
+            background: var(--active-color, var(--text-main));
+            color: var(--bg-body);
+        }
+
+        .gc-body {
+            padding: 16px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: space-between;
+            overflow: hidden; /* No scroll inside cards */
+        }
+
+        .game-card.live .gc-header {
+            background: var(--bg-elevated);
+            color: var(--active-color, var(--text-main));
+        }
+        
+        .live-indicator {
+            width: 8px; height: 8px; 
+            background: var(--green);
+            border-radius: 50%;
+            display: inline-block; 
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 8px var(--green);
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* Chart Mode Adjustments */
+        .chart-mode .main-layout {
+            grid-template-columns: 1fr !important;
+            padding: 12px 24px;
+        }
+        
+        .chart-mode .right-sidebar {
+            display: none !important;
+        }
+        
+        .chart-mode .center-column {
+            align-items: center !important;
+        }
+        
+        .chart-mode .center-column .bottom-row {
+            display: none !important;
+        }
+
+        .chart-mode .game-stage {
+            transform: scale(0.95);
+            transform-origin: top center;
+            padding: 0;
+            gap: 16px;
+            min-height: auto !important;
+            justify-content: center !important;
+            width: auto !important;
+            flex: initial !important;
+            margin-top: 24px;
+        }
+        
+        .chart-mode .game-card {
+            min-width: 300px;
+            max-width: 450px;
+        }
+        .chart-mode .gc-header { padding: 10px 16px; font-size: 10px; }
+        .chart-mode .gc-body { padding: 12px; gap: 8px; }
+        .chart-mode .big-price { font-size: 28px; }
+        .chart-mode .price-display { padding: 12px 0; margin: 4px 0; }
+
+        /* Vertical Center Fix for Cards */
+        .game-card.prev .gc-body,
+        .game-card.next .gc-body {
+            justify-content: center;
+        }
+        
+        /* View Sections */
+        .view-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .view-section.hidden {
+            display: none !important;
+        }
+        
+        /* Chips */
+        .chip {
+            font-family: 'JetBrains Mono';
+            font-size: 10px;
+            padding: 4px 8px;
+            background: var(--line);
+            color: var(--text-main);
+        }
+
+        /* Price Display */
+        .price-display {
+            text-align: center;
+            padding: 20px;
+            background: var(--bg-hover);
+            border-radius: var(--radius);
+            margin: 8px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        
+        .price-display .p-label {
+            font-size: 10px;
+            color: var(--text-ter);
+            letter-spacing: 2px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .big-price {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -2px;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        #liveDiff {
+            font-size: 12px;
+            font-family: 'JetBrains Mono';
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-weight: 600;
+        }
+        
+        /* Status Styling */
+        .price-display.win-up { background: linear-gradient(135deg, var(--green-dim) 0%, var(--bg-hover) 100%); }
+        .price-display.win-down { background: linear-gradient(135deg, var(--red-dim) 0%, var(--bg-hover) 100%); }
+        .price-display.win-up .big-price { color: var(--green); }
+        .price-display.win-down .big-price { color: var(--red); }
+        
+        .price-display.win-up #liveDiff { color: var(--green); background: var(--green-dim); }
+        .price-display.win-down #liveDiff { color: var(--red); background: var(--red-dim); }
+        
+        /* Multipliers Row */
+        .mult-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-family: 'JetBrains Mono';
+            padding: 10px 12px;
+            background: var(--bg-hover);
+            border-radius: var(--radius-sm);
+            color: var(--text-sec);
+        }
+        .mult-val { color: var(--text-main); font-weight: 600; }
+
+        /* Betting Buttons */
+        .bet-btn {
+            padding: 16px 20px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--bg-surface);
+            color: var(--text-sec);
+            font-family: 'JetBrains Mono';
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0;
+        }
+        .bet-btn:hover { 
+            border-color: var(--line-bright);
+            color: var(--text-main);
+            background: var(--bg-hover);
+            transform: translateY(-1px);
+        }
+        .bet-btn.up:hover { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+        .bet-btn.down:hover { border-color: var(--red); color: var(--red); background: var(--red-dim); }
+
+        .live-outcome {
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border-radius: var(--radius);
+            border: 1px solid var(--line);
+            font-family: 'JetBrains Mono';
+            transition: all 0.2s;
+        }
+        .live-outcome.up { border-left: 4px solid var(--green); }
+        .live-outcome.down { border-left: 4px solid var(--red); }
+        
+        .live-outcome.dominant {
+            transition: all 0.3s ease;
+        }
+        
+        .live-outcome.up.dominant {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, var(--bg-elevated) 100%);
+            border-color: var(--green);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.15);
+        }
+        
+        .live-outcome.down.dominant {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, var(--bg-elevated) 100%);
+            border-color: var(--red);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+        }
+        
+        .live-center-display {
+            text-align: center;
+            padding: 8px 0;
+        }
+        
+        .chip-btn {
+            flex: 1;
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            color: var(--text-sec);
+            border-radius: 4px;
+            font-size: 10px;
+            padding: 6px 0;
+            cursor: pointer;
+            font-family: 'JetBrains Mono';
+            transition: all 0.1s;
+        }
+        .chip-btn:hover { background: var(--bg-hover); color: var(--text-main); border-color: var(--line-bright); }
+        
+        .hidden { display: none !important; }
+
+        /* ===========================================
+           RESPONSIVE DESIGN - CLEAN IMPLEMENTATION
+           =========================================== */
+
+        /* Mobile Menu Button - Hidden on desktop */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Mobile Menu Dropdown */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--line);
+            z-index: 99;
+            flex-direction: column;
+        }
+        .mobile-menu.active { display: flex; }
+        .mobile-menu a {
+            padding: 16px 20px;
+            color: var(--text-sec);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 1px solid var(--line);
+        }
+        .mobile-menu a:active { background: var(--bg-hover); color: var(--text-main); }
+
+        /* TABLET: Under 1200px */
+        @media screen and (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .right-sidebar {
+                display: none;
+            }
+        }
+
+        /* MOBILE: Under 768px */
+        @media screen and (max-width: 768px) {
+            /* Reset body */
+            body {
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
+            /* === NAVIGATION === */
+            nav {
+                height: 56px !important;
+                padding: 0 8px 0 16px !important;
+            }
+            .brand {
+                padding: 0 !important;
+                border: none !important;
+                font-size: 15px !important;
+            }
+            .brand span {
+                display: none !important;
+            }
+            .user-nav {
+                display: none !important;
+            }
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+            .nav-right .nav-action {
+                display: none !important;
+            }
+            .nav-right #btnWallet.nav-action {
+                display: flex !important;
+                padding: 0 14px !important;
+                height: 36px !important;
+                font-size: 11px !important;
+                border-radius: 6px !important;
+            }
+
+            /* === MAIN VIEW === */
+            #view-markets {
+                padding-top: 56px !important;
+                height: auto !important;
+                min-height: 100vh;
+                overflow: visible !important;
+            }
+
+            /* === LAYOUT === */
+            .main-layout {
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 16px !important;
+                gap: 16px !important;
+                max-width: 100% !important;
+            }
+            .center-column {
+                overflow: visible !important;
+            }
+            .right-sidebar {
+                display: none !important;
+            }
+
+            /* === GAME CARDS === */
+            .game-stage {
+                flex-direction: column !important;
+                gap: 16px !important;
+                min-height: auto !important;
+            }
+            .game-card {
+                min-width: 0 !important;
+                width: 100% !important;
+                flex: none !important;
+            }
+            .game-card.prev {
+                display: none !important;
+            }
+            .game-card.live {
+                order: 1;
+            }
+            .game-card.next {
+                order: 2;
+            }
+
+            /* Card content adjustments */
+            .gc-header {
+                padding: 12px 14px !important;
+            }
+            .gc-body {
+                padding: 14px !important;
+                gap: 12px !important;
+            }
+            .big-price {
+                font-size: 32px !important;
+            }
+            .price-display {
+                padding: 16px !important;
+            }
+            .live-outcome {
+                padding: 10px 12px !important;
+            }
+            .bet-btn {
+                height: 52px !important;
+                font-size: 15px !important;
+            }
+            #wagerAmount {
+                font-size: 16px !important; /* Prevents iOS zoom */
+                height: 44px !important;
+            }
+            .chip-btn {
+                padding: 10px 0 !important;
+                font-size: 12px !important;
+            }
+
+            /* === BOTTOM SECTION === */
+            .bottom-row {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 16px !important;
+                margin-top: 16px !important;
+                grid-template-columns: 1fr !important;
+            }
+            .chat-module {
+                height: 280px !important;
+                min-height: 280px !important;
+                display: flex !important;
+            }
+            .chat-messages {
+                padding: 12px !important;
+                overflow-y: auto !important;
+            }
+            .chat-input {
+                padding: 10px !important;
+            }
+            .chat-input input {
+                font-size: 16px !important; /* Prevents iOS zoom */
+                padding: 12px !important;
+            }
+
+            /* === LEADERBOARD === */
+            #view-leaderboard {
+                padding-top: 72px !important;
+                padding-bottom: 32px !important;
+                height: auto !important;
+                overflow: visible !important;
+                overflow-y: auto !important;
+            }
+            #view-leaderboard .page-container {
+                padding: 0 16px !important;
+            }
+            /* Stack podium vertically */
+            #view-leaderboard .page-container > div:first-of-type {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 16px !important;
+            }
+            .podium-card {
+                width: 100% !important;
+            }
+            .podium-card.winner {
+                order: -1; /* Winner first */
+            }
+            .terminal-table {
+                overflow-x: auto !important;
+            }
+            .tt-head, .tt-row {
+                padding: 12px !important;
+                font-size: 11px !important;
+                min-width: 400px;
+            }
+
+            /* === PROFILE === */
+            #view-profile {
+                padding-top: 72px !important;
+                padding-bottom: 32px !important;
+                height: auto !important;
+                overflow: visible !important;
+                overflow-y: auto !important;
+            }
+            #view-profile .page-container {
+                padding: 0 16px !important;
+            }
+            #view-profile .sidebar-card:first-of-type {
+                flex-direction: column !important;
+                align-items: center !important;
+                text-align: center;
+                gap: 16px !important;
+            }
+            #view-profile .sidebar-card:first-of-type > div:last-child {
+                width: 100% !important;
+            }
+            #profileStatsGrid {
+                grid-template-columns: 1fr 1fr !important;
+                gap: 10px !important;
+            }
+            .p-stat-card {
+                padding: 14px !important;
+            }
+            #profileContentSplit {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+            }
+
+            /* === CHART === */
+            #chart-container {
+                height: 280px !important;
+            }
+            .chart-mode .game-stage {
+                transform: none !important;
+                margin-top: 16px !important;
+            }
+            .chart-mode .game-card {
+                max-width: 100% !important;
+            }
+
+            /* === MODALS === */
+            .modal-content {
+                margin: 20px !important;
+                padding: 24px !important;
+                width: calc(100% - 40px) !important;
+                max-width: none !important;
+            }
+        }
+
+        /* SMALL PHONES: Under 400px */
+        @media screen and (max-width: 400px) {
+            nav {
+                padding: 0 4px 0 12px !important;
+            }
+            .brand {
+                font-size: 13px !important;
+            }
+            .main-layout {
+                padding: 12px !important;
+                gap: 12px !important;
+            }
+            .gc-header {
+                padding: 10px 12px !important;
+                font-size: 10px !important;
+            }
+            .gc-body {
+                padding: 12px !important;
+                gap: 10px !important;
+            }
+            .big-price {
+                font-size: 26px !important;
+            }
+            .bet-btn {
+                height: 48px !important;
+                font-size: 14px !important;
+            }
+            .chat-module {
+                height: 240px !important;
+                min-height: 240px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. STEALTH NAV -->
+    <nav>
+        <div class="nav-left-group">
+            <div class="brand" onclick="showView('markets')">
+            FLASH <span>// TERMINAL</span>
+        </div>
+
+        <div class="user-nav">
+                <a id="nav-markets" class="active" onclick="showView('markets')">Live Rounds</a>
+                <a id="nav-leaderboard" onclick="showView('leaderboard')">Leaderboard</a>
+        </div>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a onclick="showView('markets'); toggleMobileMenu();" class="active">Live Rounds</a>
+            <a onclick="showView('leaderboard'); toggleMobileMenu();">Leaderboard</a>
+            <a onclick="toggleHowItWorks(); toggleMobileMenu();">Help</a>
+        </div>
+
+        <div class="nav-right" style="position:relative;">
+            <div class="nav-action" onclick="toggleHowItWorks()" style="font-family:'JetBrains Mono'; font-size:12px; color:var(--text-sec); padding: 0 16px;">
+                [ HELP ]
+            </div>
+            
+            <!-- Wallet Wrapper -->
+            <div style="position: relative; display: flex; align-items: stretch;">
+                <div class="nav-action" id="btnWallet" onclick="toggleWallet()" style="font-weight:700; cursor:pointer;">
+                    CONNECT WALLET
+                </div>
+        <!-- Dropdown -->
+        <div id="walletMenu" class="wallet-menu hidden">
+            <div class="asset-item" onclick="openProfile(true)">Profile</div>
+            <div class="asset-item" onclick="logout()">Logout</div>
+        </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- VIEW 1: MARKETS -->
+    <div id="view-markets" class="view-section" style="padding-top: 64px; height: 100vh; display: flex; flex-direction: column; overflow: hidden;">
+        
+        <!-- Chart -->
+        <div id="chart-container" class="hidden" style="width: 100%; height: 450px; border-bottom: 1px solid var(--line);">
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+                <div id="tradingview_12345" style="height:100%;width:100%"></div>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            
+            <!-- CENTER COLUMN -->
+            <div class="center-column" style="overflow:hidden;">
+                
+                <!-- GAME STAGE -->
+                <div class="game-stage" style="min-height: 420px; flex: 0 0 auto;">
+                    
+                    <!-- 1. PREVIOUS -->
+                    <div class="game-card prev">
+                        <div class="gc-header">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span class="currency-icon btc">₿</span>
+                                <span>#8821 // CLOSED</span>
+                            </div>
+                            <span>SETTLED</span>
+                        </div>
+                        <div class="gc-body" style="justify-content:center;">
+                            <div class="mult-row">
+                                <span class="mult-val" style="color:var(--green)">UP 1.8x</span>
+                                <span>LOCK: 96,400</span>
+                            </div>
+                            
+                            <div class="price-display settled win-up">
+                                <span class="p-label">CLOSE PRICE</span>
+                                <div class="big-price" style="color:var(--green)">96,450</div>
+                                <div class="chip" style="margin-top:8px; background:rgba(39, 245, 153, 0.2); color:var(--green); border:1px solid var(--green);">UP WON</div>
+                            </div>
+
+                            <div class="mult-row">
+                                <span class="mult-val" style="color:var(--red)">DOWN 2.1x</span>
+                                <span>POOL: 12.5 BTC</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. LIVE ROUND -->
+                    <div class="game-card live" id="liveCard">
+                        <div class="gc-header" style="position: relative;">
+                            <div style="display:flex; align-items:center; gap:16px;">
+                                <div style="position:relative;">
+                                    <div id="assetSelectorBtn" onclick="toggleAssetMenu()" style="display:flex; align-items:center; gap:8px; cursor:pointer; padding:4px 10px; border-radius:4px; transition:all 0.2s;">
+                                        <span id="navAssetIcon" class="currency-icon btc">₿</span>
+                                        <span id="navAssetLabel" style="font-weight:800; font-size:12px;">BTC</span>
+                                        <span style="font-size:10px; opacity:0.5;">▼</span>
+                                    </div>
+                                    <div id="assetMenu" class="asset-menu hidden" style="position:absolute; top:100%; left:0; width:160px; margin-top:8px; z-index:500;">
+                                        <div class="asset-item" onclick="selectAsset('BTC')"><span class="currency-icon btc">₿</span> BTC</div>
+                                        <div class="asset-item" onclick="selectAsset('SOL')"><span class="currency-icon sol">S</span> SOL</div>
+                                        <div class="asset-item" onclick="selectAsset('HYPE')"><span class="currency-icon hype">H</span> HYPE</div>
+                                        <div class="asset-item" onclick="selectAsset('ETH')"><span class="currency-icon eth">Ξ</span> ETH</div>
+                                    </div>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:6px; font-size:11px; opacity:0.8;">
+                                    <span>LIVE</span>
+                                    <span class="live-indicator"></span>
+                                </div>
+                            </div>
+
+                            <div style="display:flex; gap:12px; align-items:center;">
+                                <button onclick="toggleChart()" class="header-btn">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                    CHART
+                                </button>
+                            </div>
+                            
+                            <!-- Header Timer -->
+                            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--bg-elevated);">
+                                <div class="timer-fill" id="timerFill" style="height: 100%; background: var(--active-color, var(--amber)); width: 100%; transition: width 1s linear;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="gc-body" style="padding: 12px; gap: 12px;">
+                            
+                            <!-- UP BLOCK -->
+                            <div class="live-outcome up" id="liveUpBlock">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <span class="lo-label" style="color: var(--green); font-weight: 800;">UP</span>
+                                    <span class="lo-mult" style="color: var(--text-main); font-weight: 700;">2.05x</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-ter);">
+                                    <span>POOL: 42.1 BTC</span>
+                                    <span>PAYOUT: 84.2 BTC</span>
+                                </div>
+                            </div>
+
+                            <!-- PRICE CENTER -->
+                            <div class="live-center-display" id="liveDisplay">
+                                <div class="lcd-label" style="font-size: 10px; color: var(--text-ter); margin-bottom: 4px;">LOCKED: <span id="lockPrice" style="color: var(--text-sec); font-family: 'JetBrains Mono';">--</span></div>
+                                <div class="big-price" id="livePrice" style="font-size: 36px; margin: 4px 0;">--</div>
+                                <div id="liveDiff" style="font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono'; padding: 4px 12px; border-radius: 100px; display: inline-block;">--</div>
+                            </div>
+
+                            <!-- DOWN BLOCK -->
+                            <div class="live-outcome down" id="liveDownBlock">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <span class="lo-label" style="color: var(--red); font-weight: 800;">DOWN</span>
+                                    <span class="lo-mult" style="color: var(--text-main); font-weight: 700;">1.95x</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-ter);">
+                                    <span>POOL: 35.4 BTC</span>
+                                    <span>PAYOUT: 70.8 BTC</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- 3. NEXT -->
+                    <div class="game-card next">
+                        <div class="gc-header">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span id="nextAssetIcon" class="currency-icon btc">₿</span>
+                                <span>#8823 // NEXT</span>
+                            </div>
+                            <span style="color:var(--text-main); font-weight:700; animation: pulse 2s infinite;">ENTRIES OPEN</span>
+                        </div>
+                        <div class="gc-body" style="padding: 20px; gap: 20px; display: flex; flex-direction: column;">
+                            
+                            <!-- Pool Stats -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div style="background: var(--bg-hover); border-radius: 6px; padding: 10px; text-align: center;">
+                                    <div style="font-size: 10px; color: var(--text-sec); margin-bottom: 2px;">TOTAL POOL</div>
+                                    <div style="font-family: 'JetBrains Mono'; font-weight: 700; color: var(--text-main);">2.4 BTC</div>
+                                </div>
+                                <div style="background: var(--bg-hover); border-radius: 6px; padding: 10px; text-align: center;">
+                                    <div style="font-size: 10px; color: var(--text-sec); margin-bottom: 2px;">PLAYERS</div>
+                                    <div style="font-family: 'JetBrains Mono'; font-weight: 700; color: var(--text-main);">142</div>
+                                </div>
+                            </div>
+
+                            <!-- Sentiment -->
+                            <div>
+                                <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:700; margin-bottom:6px;">
+                                    <span id="bull-pct" style="color:var(--green)">BULLS 65%</span>
+                                    <span id="bear-pct" style="color:var(--red)">BEARS 35%</span>
+                                </div>
+                                <div style="width:100%; display:flex; gap:2px; height:6px; border-radius:100px; overflow:hidden; background:var(--bg-hover);">
+                                    <div id="sent-up" style="width:65%; background:var(--green);"></div>
+                                    <div id="sent-down" style="width:35%; background:var(--red);"></div>
+                                </div>
+                            </div>
+
+                            <!-- Wager Section -->
+                            <div style="margin-top: auto;">
+                                <div style="font-size: 11px; color: var(--text-sec); margin-bottom: 8px;">WAGER AMOUNT</div>
+                                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                    <div style="flex: 1; position: relative;">
+                                         <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-ter); font-weight:700;">$</span>
+                                         <input id="wagerAmount" type="number" value="10" style="width:100%; height: 40px; background:var(--bg-elevated); border:1px solid var(--line); border-radius:6px; padding:0 12px 0 28px; color:var(--text-main); font-family:'JetBrains Mono'; font-weight:700; outline:none; font-size:14px;">
+                                    </div>
+                                    <button onclick="setWager('max')" style="width: 50px; background: var(--bg-hover); border: 1px solid var(--line); color: var(--text-sec); border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s;">MAX</button>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                     <button onclick="setWager(10)" class="chip-btn">10</button>
+                                     <button onclick="setWager(50)" class="chip-btn">50</button>
+                                     <button onclick="setWager(100)" class="chip-btn">100</button>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <button class="bet-btn up" onclick="placeBet('up')" style="height: 56px; font-size: 14px; font-weight: 800;">UP ↗</button>
+                                <button class="bet-btn down" onclick="placeBet('down')" style="height: 56px; font-size: 14px; font-weight: 800;">DOWN ↘</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM ROW -->
+                <div class="bottom-row" style="display:grid; grid-template-columns: 1.5fr 1fr; gap:24px; margin-top:24px; flex:1; min-height:0;">
+                    
+                    <!-- CHAT -->
+                    <div class="chat-module" id="chatModule" style="display:flex; flex-direction:column; background:var(--bg-surface); border:1px solid var(--line); border-radius:var(--radius-lg); overflow:hidden; height:100%; position:relative;">
+                        <div class="chat-header" style="padding:12px 16px; border-bottom:1px solid var(--line); font-weight:700; font-size:12px; color:var(--text-sec); display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span>LIVE CHAT</span>
+                                <span style="color:var(--green);">● 1,240</span>
+                            </div>
+                            <button class="chat-hide-toggle" onclick="toggleChatVisibility()" title="Hide Chat">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Unhide Overlay -->
+                        <div class="unhide-overlay">
+                            <button class="unhide-btn" onclick="toggleChatVisibility()">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                SHOW CHAT
+                            </button>
+                        </div>
+
+                        <div class="chat-messages" style="flex:1; overflow-y:hidden; padding:16px; display:flex; flex-direction:column; gap:10px;">
+                            <div class="chat-msg" style="font-size:13px;"><span style="color:var(--green); font-weight:600; font-family:'JetBrains Mono'; font-size:12px;">MoonBoi:</span> Anyone seeing this pump? 🚀</div>
+                            <div class="chat-msg" style="font-size:13px;"><span style="color:var(--red); font-weight:600; font-family:'JetBrains Mono'; font-size:12px;">BearMarket:</span> It's a trap, going down soon.</div>
+                            <div class="chat-msg" style="font-size:13px;"><span style="color:var(--blue); font-weight:600; font-family:'JetBrains Mono'; font-size:12px;">Whale_0x99:</span> Just longed 50x. Don't fade.</div>
+                            <div class="chat-msg" style="font-size:13px;"><span style="color:var(--text-ter); font-weight:600; font-family:'JetBrains Mono'; font-size:12px;">Newbie:</span> How do I deposit?</div>
+                        </div>
+                        <div class="chat-input" style="padding:12px; border-top:1px solid var(--line); display:flex; gap:8px; background:var(--bg-hover);">
+                            <input type="text" placeholder="Say something..." style="flex:1; background:var(--bg-body); border:1px solid var(--line); padding:10px 14px; border-radius:6px; color:var(--text-main); font-family:'Inter'; font-size:13px; outline:none;">
+                            <button style="background:var(--text-main); color:var(--bg-body); border:none; padding:0 16px; border-radius:6px; font-weight:700; cursor:pointer; font-size:12px;">SEND</button>
+                        </div>
+                    </div>
+
+                    <!-- HISTORY (Replaced Top Winners) -->
+                    <div class="sidebar-card" style="display:flex; flex-direction:column; overflow:hidden;">
+                        <div class="sidebar-header" style="padding:14px 16px; font-family:'JetBrains Mono'; font-size:11px; font-weight:700; color:var(--text-sec); text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--line); background:var(--bg-surface);">
+                            History
+                        </div>
+                        <div style="padding:0; display:flex; flex-direction:column; flex:1; overflow-y:auto;">
+                            <div class="lb-row">
+                                <div class="lb-round">#8820</div>
+                                <div class="lb-asset">BTC</div>
+                                <div class="lb-dir up">UP</div>
+                                <div class="lb-result win">+1.8 BTC</div>
+                            </div>
+                            <div class="lb-row">
+                                <div class="lb-round">#8819</div>
+                                <div class="lb-asset">SOL</div>
+                                <div class="lb-dir down">DOWN</div>
+                                <div class="lb-result loss">-0.5 SOL</div>
+                            </div>
+                            <div class="lb-row">
+                                <div class="lb-round">#8818</div>
+                                <div class="lb-asset">BTC</div>
+                                <div class="lb-dir up">UP</div>
+                                <div class="lb-result win">+0.4 BTC</div>
+                            </div>
+                             <div class="lb-row">
+                                <div class="lb-round">#8817</div>
+                                <div class="lb-asset">ETH</div>
+                                <div class="lb-dir down">DOWN</div>
+                                <div class="lb-result win">+2.2 ETH</div>
+                            </div>
+                            <div class="lb-row">
+                                <div class="lb-round">#8816</div>
+                                <div class="lb-asset">HYPE</div>
+                                <div class="lb-dir up">UP</div>
+                                <div class="lb-result loss">-100 HYPE</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDEBAR -->
+            <div class="right-sidebar" style="display:flex; flex-direction:column; overflow:hidden;">
+                <div class="sidebar-card" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+                    <div class="sidebar-header" style="padding:14px 16px; font-family:'JetBrains Mono'; font-size:11px; font-weight:700; color:var(--text-sec); text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--line); background:var(--bg-surface);">
+                        Recent Activity
+                    </div>
+                    <div class="activity-list" style="overflow-y:hidden; flex:1; padding:12px; display:flex; flex-direction:column; gap:12px;">
+                        <div class="activity-item">
+                            <div class="act-icon">🐋</div>
+                            <div class="act-content"><strong style="cursor:pointer" onclick="openProfile(false, {name:'Whale_0x99', address:'0x82...39A', twitter:'@Whale_0x99', rank:'#1', points:'1,240', profit:'+$124.5k', winRate:'68%'})">Whale_0x99</strong> flipped <strong>1.5 BTC</strong> on UP.</div>
+                            <div class="act-time">1m ago</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="act-icon">👻</div>
+                            <div class="act-content"><strong style="cursor:pointer" onclick="openProfile(false)">SatoshiGhost</strong> entered DOWN.</div>
+                            <div class="act-time">2m ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: LEADERBOARD -->
+    <div id="view-leaderboard" class="view-section hidden" style="overflow-y: auto; padding-top: 88px; padding-bottom: 48px;">
+        <div class="page-container" style="max-width: 1000px; margin: 0 auto; padding: 0 24px;">
+            
+            <!-- TOP 3 PODIUM -->
+            <div style="display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 24px; align-items: end; margin-bottom: 64px;">
+                
+                <!-- Rank 2 -->
+                <div class="podium-card">
+                    <div class="pc-rank">#2</div>
+                    <div class="pc-avatar">👻</div>
+                    <div class="pc-name" style="cursor:pointer" onclick="openProfile(false, {name:'SatoshiGhost', address:'0x7A...11F', twitter:'@SatoshiGhost', rank:'#2', points:'980', profit:'+$98.2k', winRate:'64%'})">SatoshiGhost</div>
+                    <div class="pc-profit">+$98.2k</div>
+                </div>
+
+                <!-- Rank 1 -->
+                <div class="podium-card winner">
+                    <div class="pc-crown">👑</div>
+                    <div class="pc-rank">#1</div>
+                    <div class="pc-avatar">🐋</div>
+                    <div class="pc-name" style="cursor:pointer" onclick="openProfile(false, {name:'Whale_0x99', address:'0x82...39A', twitter:'@Whale_0x99', rank:'#1', points:'1,240', profit:'+$124.5k', winRate:'68%'})">Whale_0x99</div>
+                    <div class="pc-profit">+$124.5k</div>
+                </div>
+
+                <!-- Rank 3 -->
+                <div class="podium-card">
+                    <div class="pc-rank">#3</div>
+                    <div class="pc-avatar">🦁</div>
+                    <div class="pc-name" style="cursor:pointer" onclick="openProfile(false, {name:'DegenKing', address:'0xAA...BB2', twitter:'@DegenKing', rank:'#3', points:'840', profit:'+$45.1k', winRate:'55%'})">DegenKing</div>
+                    <div class="pc-profit">+$45.1k</div>
+                </div>
+
+            </div>
+
+            <!-- FULL LIST -->
+            <div style="margin-bottom: 16px; font-family:'JetBrains Mono'; font-size:12px; color:var(--text-sec);">// GLOBAL RANKINGS</div>
+            
+            <div class="terminal-table">
+                <div class="tt-head">
+                    <div style="width:60px">#</div>
+                    <div style="flex:1">TRADER</div>
+                    <div style="width:120px; text-align:right">WIN RATE</div>
+                    <div style="width:150px; text-align:right">NET PROFIT</div>
+                </div>
+                
+                <div class="tt-row">
+                    <div style="width:60px; color:var(--text-ter)">4</div>
+                    <div style="flex:1; font-weight:600; color:var(--text-main)">Alpha_Trader</div>
+                    <div style="width:120px; text-align:right; color:var(--text-sec)">48%</div>
+                    <div style="width:150px; text-align:right; color:var(--green)">+$12,400</div>
+                </div>
+                <div class="tt-row">
+                    <div style="width:60px; color:var(--text-ter)">5</div>
+                    <div style="flex:1; font-weight:600; color:var(--text-main)">Omega_Lul</div>
+                    <div style="width:120px; text-align:right; color:var(--text-sec)">51%</div>
+                    <div style="width:150px; text-align:right; color:var(--green)">+$8,200</div>
+                </div>
+                <div class="tt-row">
+                    <div style="width:60px; color:var(--text-ter)">6</div>
+                    <div style="flex:1; font-weight:600; color:var(--text-main)">Moon_Sniper</div>
+                    <div style="width:120px; text-align:right; color:var(--text-sec)">42%</div>
+                    <div style="width:150px; text-align:right; color:var(--green)">+$5,100</div>
+                </div>
+                <div class="tt-row">
+                    <div style="width:60px; color:var(--text-ter)">7</div>
+                    <div style="flex:1; font-weight:600; color:var(--text-main)">Bear_Trap</div>
+                    <div style="width:120px; text-align:right; color:var(--text-sec)">39%</div>
+                    <div style="width:150px; text-align:right; color:var(--red)">-$1,200</div>
+                </div>
+                <div class="tt-row">
+                    <div style="width:60px; color:var(--text-ter)">8</div>
+                    <div style="flex:1; font-weight:600; color:var(--text-main)">YOLO_Master</div>
+                    <div style="width:120px; text-align:right; color:var(--text-sec)">12%</div>
+                    <div style="width:150px; text-align:right; color:var(--red)">-$8,400</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- VIEW 3: PROFILE -->
+    <div id="view-profile" class="view-section hidden" style="overflow-y: auto; padding-top: 88px; padding-bottom: 48px;">
+        <div class="page-container" style="max-width: 1000px; margin: 0 auto; padding: 0 24px;">
+            
+            <!-- PROFILE HEADER -->
+            <div class="sidebar-card" style="padding: 24px; display: flex; align-items: center; gap: 24px; margin-bottom: 24px;">
+                <div style="position: relative;">
+                    <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 48px; border: 2px solid var(--line);">🐋</div>
+                    <button id="profileEditBtn" style="position: absolute; bottom: 0; right: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--bg-surface); border: 1px solid var(--line); color: var(--text-sec); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.color='var(--text-main)'" onmouseout="this.style.color='var(--text-sec)'">✎</button>
+                </div>
+                
+                <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-family: 'JetBrains Mono'; font-size: 12px; color: var(--text-ter); margin-bottom: 4px;">DISPLAY NAME</div>
+                            <input id="profileNameInput" type="text" value="Whale_0x99" style="background: transparent; border: none; border-bottom: 1px solid transparent; padding: 4px 0; font-size: 24px; font-weight: 700; color: var(--text-main); font-family: 'Inter'; width: 100%; max-width: 300px; transition: border 0.2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='transparent'">
+                            <div id="profileNameDisplay" class="hidden" style="font-size: 24px; font-weight: 700; color: var(--text-main); font-family: 'Inter'; padding: 4px 0;">Whale_0x99</div>
+                        </div>
+                        <button id="profileSaveBtn" class="bet-btn" onclick="saveProfile()" style="height: auto; padding: 8px 16px; font-size: 11px; margin:0;">SAVE CHANGES</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 16px; margin-top: 16px; align-items: center;">
+                        <div id="profileWalletAddr" style="font-family: 'JetBrains Mono'; font-size: 12px; color: var(--text-sec); background: var(--bg-hover); padding: 6px 12px; border-radius: 4px;">0x82...39A</div>
+                        
+                        <!-- Connect X Button (Editable) -->
+                        <button id="btnConnectX" style="background: transparent; border: 1px solid var(--line); color: var(--text-sec); padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono'; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--text-main)'; this.style.color='var(--text-main)'" onmouseout="this.style.borderColor='var(--line)'; this.style.color='var(--text-sec)'">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            CONNECT X
+                        </button>
+                        
+                        <!-- X Badge (Read-only) -->
+                        <a id="badgeX" href="#" target="_blank" class="hidden" style="background: transparent; border: 1px solid var(--line); color: var(--blue); padding: 6px 12px; border-radius: 4px; font-size: 12px; text-decoration:none; display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono';">
+                             <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            @Whale_0x99
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATS GRID -->
+            <div id="profileStatsGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                <div class="p-stat-card" style="text-align: left; padding: 16px 20px;">
+                    <div class="ps-label">GLOBAL RANK</div>
+                    <div class="ps-val" style="font-size: 20px; color: var(--amber);">#1</div>
+                </div>
+                <div class="p-stat-card" style="text-align: left; padding: 16px 20px;">
+                    <div class="ps-label">TOTAL POINTS</div>
+                    <div class="ps-val" style="font-size: 20px;">1,240</div>
+                </div>
+                <div class="p-stat-card" style="text-align: left; padding: 16px 20px;">
+                    <div class="ps-label">NET PROFIT</div>
+                    <div class="ps-val" style="font-size: 20px; color: var(--green);">+$124.5k</div>
+                </div>
+                <div class="p-stat-card" style="text-align: left; padding: 16px 20px;">
+                    <div class="ps-label">WIN RATE</div>
+                    <div class="ps-val" style="font-size: 20px;">68%</div>
+                </div>
+            </div>
+
+            <!-- CONTENT SPLIT -->
+            <div id="profileContentSplit" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                
+                <!-- LEFT: HISTORY -->
+                <div id="profileHistoryCol" class="sidebar-card" style="display: flex; flex-direction: column;">
+                    <div class="sidebar-header" style="padding: 16px 24px; border-bottom: 1px solid var(--line); background: var(--bg-surface);">
+                        TRADE HISTORY
+                    </div>
+                    <div class="terminal-table" style="border: none; border-radius: 0;">
+                         <div class="tt-head">
+                            <div style="width:80px">ROUND</div>
+                            <div style="width:60px">ASSET</div>
+                            <div style="width:60px">DIR</div>
+                            <div style="flex:1; text-align:right">WAGER</div>
+                            <div style="width:100px; text-align:right">RESULT</div>
+                        </div>
+                        <!-- Rows -->
+                        <div class="tt-row">
+                            <div style="width:80px; color:var(--text-ter)">#8820</div>
+                            <div style="width:60px; font-weight:700">BTC</div>
+                            <div style="width:60px; color:var(--green)">UP</div>
+                            <div style="flex:1; text-align:right; color:var(--text-sec)">1.0 BTC</div>
+                            <div style="width:100px; text-align:right; color:var(--green)">+1.8 BTC</div>
+                        </div>
+                         <div class="tt-row">
+                            <div style="width:80px; color:var(--text-ter)">#8819</div>
+                            <div style="width:60px; font-weight:700">SOL</div>
+                            <div style="width:60px; color:var(--red)">DOWN</div>
+                            <div style="flex:1; text-align:right; color:var(--text-sec)">5.0 SOL</div>
+                            <div style="width:100px; text-align:right; color:var(--red)">-5.0 SOL</div>
+                        </div>
+                        <div class="tt-row">
+                            <div style="width:80px; color:var(--text-ter)">#8815</div>
+                            <div style="width:60px; font-weight:700">HYPE</div>
+                            <div style="width:60px; color:var(--green)">UP</div>
+                            <div style="flex:1; text-align:right; color:var(--text-sec)">100 HYPE</div>
+                            <div style="width:100px; text-align:right; color:var(--green)">+180 HYPE</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: REFERRALS (HIDDEN FOR STRANGERS) -->
+                <div id="profileReferralsCol" style="display: flex; flex-direction: column; gap: 16px;">
+                    
+                    <!-- REFERRAL LINK -->
+                    <div class="sidebar-card" style="padding: 20px;">
+                        <div class="ps-label" style="margin-bottom: 8px;">YOUR REFERRAL LINK</div>
+                        <div style="display: flex; gap: 8px;">
+                            <div style="flex: 1; background: var(--bg-body); border: 1px solid var(--line); padding: 10px; border-radius: 4px; font-family: 'JetBrains Mono'; font-size: 11px; color: var(--text-sec); overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                flash.trade/ref/whale99
+                            </div>
+                            <button class="bet-btn" style="padding: 0 12px; height: auto; margin: 0;" onclick="alert('Copied!')">COPY</button>
+                        </div>
+                        <div style="margin-top: 12px; font-size: 11px; color: var(--text-ter);">
+                            Earn 10% of trading fees from your referrals forever.
+                        </div>
+                    </div>
+
+                    <!-- REFERRED USERS -->
+                    <div class="sidebar-card" style="flex: 1; display: flex; flex-direction: column;">
+                        <div class="sidebar-header" style="padding: 16px 20px; border-bottom: 1px solid var(--line);">
+                            REFERRALS (4)
+                        </div>
+                        <div style="padding: 0;">
+                             <div class="lb-row" style="padding: 12px 20px;">
+                                <div style="width: 24px;">👻</div>
+                                <div style="flex: 1; font-weight: 600;">SatoshiGhost</div>
+                                <div style="color: var(--green); font-weight: 700;">+120 pts</div>
+                            </div>
+                             <div class="lb-row" style="padding: 12px 20px;">
+                                <div style="width: 24px;">🦁</div>
+                                <div style="flex: 1; font-weight: 600;">DegenKing</div>
+                                <div style="color: var(--green); font-weight: 700;">+85 pts</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL -->
+    <div id="modalHowItWorks" class="modal-overlay hidden" onclick="toggleHowItWorks()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>How It Works</h3>
+            <p>Predict price movement in 45s rounds.</p>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background: var(--bg-surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 32px; width: 100%; max-width: 480px; box-shadow: var(--shadow-lg); color: var(--text-main); }
+    </style>
+
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        // --- GAME STATE ---
+        const assets = {
+            'BTC': { price: 96420.00, symbol: 'BINANCE:BTCUSDT', color: '#F7931A' },
+            'SOL': { price: 238.50, symbol: 'BINANCE:SOLUSDT', color: '#9945FF' },
+            'HYPE': { price: 14.20, symbol: 'BITGET:HYPEUSDT', color: '#00ff9d' },
+            'ETH': { price: 3650.00, symbol: 'BINANCE:ETHUSDT', color: '#627EEA' }
+        };
+        
+        let currentAsset = 'BTC';
+        let lockPrice = 96420.00;
+        let curPrice = 96420.00;
+        let roundTime = 45; 
+
+        function showView(viewName) {
+            // Standard View Switching
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.user-nav a').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.mobile-menu a').forEach(el => el.classList.remove('active'));
+            
+            const targetView = document.getElementById('view-' + viewName);
+            if (targetView) targetView.classList.remove('hidden');
+
+            const navLink = document.getElementById('nav-' + viewName);
+            if (navLink) navLink.classList.add('active');
+        }
+        
+        function toggleHowItWorks() {
+            const modal = document.getElementById('modalHowItWorks');
+            if(modal) modal.classList.toggle('hidden');
+        }
+
+        function toggleAssetMenu() {
+            document.getElementById('assetMenu').classList.toggle('hidden');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+
+        const assetIcons = {
+            'BTC': '₿',
+            'SOL': 'S',
+            'ETH': 'Ξ',
+            'HYPE': 'H'
+        };
+
+        function selectAsset(assetKey) {
+            const menu = document.getElementById('assetMenu');
+            if(menu) menu.classList.add('hidden');
+
+            const color = assets[assetKey].color;
+            const btn = document.getElementById('assetSelectorBtn');
+            const navLabel = document.getElementById('navAssetLabel');
+            const navIcon = document.getElementById('navAssetIcon');
+            const nextIcon = document.getElementById('nextAssetIcon');
+            
+            if(btn) {
+                btn.style.background = color;
+                btn.style.color = '#000000'; 
+                btn.style.fontWeight = '700';
+                btn.style.border = 'none'; 
+            }
+            
+            if(navLabel) navLabel.innerText = assetKey;
+            
+            // Update currency icons
+            const iconClass = assetKey.toLowerCase();
+            if(navIcon) {
+                navIcon.className = 'currency-icon ' + iconClass;
+                navIcon.innerText = assetIcons[assetKey];
+            }
+            if(nextIcon) {
+                nextIcon.className = 'currency-icon ' + iconClass;
+                nextIcon.innerText = assetIcons[assetKey];
+            }
+
+            document.documentElement.style.setProperty('--active-color', color);
+
+            currentAsset = assetKey;
+            lockPrice = assets[assetKey].price;
+            curPrice = assets[assetKey].price;
+            
+            document.getElementById('lockPrice').innerText = lockPrice.toLocaleString();
+            
+            const chartContainer = document.getElementById('chart-container');
+            if(chartContainer && !chartContainer.classList.contains('hidden')) {
+                loadTradingViewWidget();
+            }
+
+            roundTime = 45;
+            updateSentiment();
+        }
+        
+        function updateSentiment() {
+            const bull = 30 + Math.floor(Math.random() * 40);
+            const bear = 100 - bull;
+            
+            // Update Next Card Bars
+            const upBar = document.getElementById('sent-up');
+            const downBar = document.getElementById('sent-down');
+            
+            if(upBar) upBar.style.width = bull + '%';
+            if(downBar) downBar.style.width = bear + '%';
+
+            // Update Live Card Dominance
+            const upBlock = document.getElementById('liveUpBlock');
+            const downBlock = document.getElementById('liveDownBlock');
+            
+            if(upBlock && downBlock) {
+                upBlock.classList.remove('dominant');
+                downBlock.classList.remove('dominant');
+                
+                if(bull > bear) {
+                    upBlock.classList.add('dominant');
+                } else {
+                    downBlock.classList.add('dominant');
+                }
+            }
+        }
+
+        function tick() {
+            const volatility = curPrice * 0.0005;
+            const move = (Math.random() - 0.5) * volatility;
+            curPrice += move;
+
+            const diff = curPrice - lockPrice;
+            const pStr = curPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            const livePriceEl = document.getElementById('livePrice');
+            const liveDiffEl = document.getElementById('liveDiff');
+            const liveDisplay = document.getElementById('liveDisplay');
+            
+            if(livePriceEl) {
+                livePriceEl.innerText = pStr;
+                if(curPrice >= lockPrice) {
+                    liveDisplay.className = 'price-display win-up';
+                    liveDiffEl.innerHTML = `UP (+${diff.toFixed(2)})`;
+                } else {
+                    liveDisplay.className = 'price-display win-down';
+                    liveDiffEl.innerHTML = `DOWN (${diff.toFixed(2)})`;
+                }
+            }
+
+            if(roundTime > 0) {
+                roundTime -= 1;
+            } else {
+                roundTime = 45; 
+                lockPrice = curPrice; 
+                document.getElementById('lockPrice').innerText = lockPrice.toLocaleString();
+                updateSentiment();
+            }
+            
+            const timerFill = document.querySelector('.timer-fill');
+            if(timerFill) {
+                const pct = (roundTime / 45) * 100;
+                timerFill.style.width = pct + '%';
+            }
+            
+            const statTime = document.getElementById('statTime');
+            if(statTime) statTime.innerText = `00:${roundTime.toString().padStart(2, '0')}`;
+        }
+
+        setInterval(tick, 1000);
+
+        let isWalletConnected = false;
+        
+        function toggleWallet() {
+            if (!isWalletConnected) {
+                // Connect Logic
+                isWalletConnected = true;
+                const btn = document.getElementById('btnWallet');
+                btn.innerHTML = "<span>0x82...39A</span> <span style='font-size:10px'>▼</span>";
+                btn.style.color = "var(--green)";
+                btn.style.background = "var(--bg-elevated)";
+                btn.style.border = "1px solid var(--line-bright)";
+                
+                // On Mobile: Go straight to profile on connect
+                if(window.innerWidth <= 768) {
+                    showView('profile');
+                }
+            } else {
+                // Toggle Menu (Desktop) or go to Profile (Mobile)
+                if(window.innerWidth <= 768) {
+                    showView('profile');
+                } else {
+                    const menu = document.getElementById('walletMenu');
+                    menu.classList.toggle('hidden');
+                }
+            }
+        }
+
+        function logout() {
+            isWalletConnected = false;
+            const btn = document.getElementById('btnWallet');
+            btn.innerHTML = "CONNECT WALLET";
+            btn.style.color = "var(--text-sec)";
+            btn.style.background = "";
+            btn.style.border = "";
+            document.getElementById('walletMenu').classList.add('hidden');
+        }
+
+        function openProfile(isOwn = true, userData = null) {
+            document.getElementById('walletMenu').classList.add('hidden');
+            if(window.innerWidth <= 768) toggleMobileMenu();
+            
+            // Data Setup
+            const data = isOwn ? {
+                name: "Whale_0x99",
+                address: "0x82...39A",
+                twitter: "@Whale_0x99",
+                rank: "#1",
+                points: "1,240",
+                profit: "+$124.5k",
+                winRate: "68%"
+            } : (userData || {
+                name: "SatoshiGhost",
+                address: "0x7A...11F",
+                twitter: "@SatoshiGhost",
+                rank: "#2",
+                points: "980",
+                profit: "+$98.2k",
+                winRate: "64%"
+            });
+
+            // Populate Fields
+            document.getElementById('profileNameInput').value = data.name;
+            document.getElementById('profileNameDisplay').innerText = data.name;
+            document.getElementById('profileWalletAddr').innerText = data.address;
+            document.getElementById('badgeX').innerHTML = `<svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> ${data.twitter}`;
+
+            // Stats
+            const stats = document.querySelectorAll('.p-stat-card .ps-val');
+            if(stats.length >= 4) {
+                stats[0].innerText = data.rank; // Rank
+                stats[1].innerText = data.points; // Points
+                stats[2].innerText = data.profit; // Profit
+                stats[3].innerText = data.winRate; // WinRate
+            }
+
+            // Toggle View Mode
+            if (isOwn) {
+                // EDIT MODE
+                document.getElementById('profileEditBtn').classList.remove('hidden');
+                document.getElementById('profileNameInput').classList.remove('hidden');
+                document.getElementById('profileNameDisplay').classList.add('hidden');
+                document.getElementById('profileSaveBtn').classList.remove('hidden');
+                
+                document.getElementById('btnConnectX').classList.remove('hidden');
+                document.getElementById('badgeX').classList.add('hidden');
+                
+                document.getElementById('profileReferralsCol').classList.remove('hidden');
+                
+                // Reset Layout
+                document.getElementById('profileContentSplit').style.gridTemplateColumns = (window.innerWidth > 768) ? "2fr 1fr" : "1fr";
+            } else {
+                // STRANGER MODE
+                document.getElementById('profileEditBtn').classList.add('hidden');
+                document.getElementById('profileNameInput').classList.add('hidden');
+                document.getElementById('profileNameDisplay').classList.remove('hidden');
+                document.getElementById('profileSaveBtn').classList.add('hidden');
+                
+                document.getElementById('btnConnectX').classList.add('hidden');
+                document.getElementById('badgeX').classList.remove('hidden');
+                
+                document.getElementById('profileReferralsCol').classList.add('hidden');
+                
+                // Expand History to full width
+                document.getElementById('profileContentSplit').style.gridTemplateColumns = "1fr";
+            }
+
+            showView('profile');
+        }
+
+        function closeProfile() {
+            showView('markets');
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('profileNameInput').value;
+            alert("Profile updated to: " + name);
+        }
+
+        function setWager(val) {
+            const input = document.getElementById('wagerAmount');
+            if(val === 'max') {
+                input.value = 1240; // Mock balance
+            } else {
+                input.value = val;
+            }
+        }
+
+        function placeBet(direction) {
+            const amount = document.getElementById('wagerAmount').value;
+            if(!amount || amount <= 0) {
+                alert("Invalid amount");
+                return;
+            }
+            
+            const btn = document.querySelector(`.bet-btn.${direction}`);
+            if(btn) {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "✓";
+                btn.style.background = direction === 'up' ? 'var(--green-dim)' : 'var(--red-dim)';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                }, 1000);
+            }
+        }
+
+        function toggleChart() {
+            const container = document.getElementById('chart-container');
+            const view = document.getElementById('view-markets');
+            const chartBtn = document.querySelector('.header-btn');
+            
+            if(container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                view.classList.add('chart-mode');
+                view.style.justifyContent = (window.innerWidth > 768) ? 'flex-start' : 'center';
+                if(chartBtn) {
+                    chartBtn.style.background = 'var(--active-color, var(--text-main))';
+                    chartBtn.style.color = 'var(--bg-body)';
+                }
+                loadTradingViewWidget();
+            } else {
+                container.classList.add('hidden');
+                view.classList.remove('chart-mode');
+                view.style.justifyContent = 'center';
+                if(chartBtn) {
+                    chartBtn.style.background = '';
+                    chartBtn.style.color = '';
+                }
+            }
+        }
+
+        function loadTradingViewWidget() {
+            const symbol = assets[currentAsset].symbol;
+            const container = document.getElementById('tradingview_12345');
+            if(container) container.innerHTML = "";
+
+            if(typeof TradingView === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://s3.tradingview.com/tv.js';
+                script.async = true;
+                script.onload = () => renderWidget(symbol);
+                document.head.appendChild(script);
+            } else {
+                renderWidget(symbol);
+            }
+        }
+
+        function renderWidget(symbol) {
+             new TradingView.widget({
+                "width": "100%", "height": "100%", "symbol": symbol, "interval": "1",
+                "timezone": "Etc/UTC", "theme": "dark", "style": "1", "locale": "en",
+                "toolbar_bg": "#f1f3f6", "enable_publishing": false, "hide_top_toolbar": true,
+                "hide_legend": true, "save_image": false, "container_id": "tradingview_12345"
+            });
+        }
+
+        function toggleChatVisibility() {
+            const chatModule = document.getElementById('chatModule');
+            chatModule.classList.toggle('hidden-chat');
+            
+            const btn = chatModule.querySelector('.chat-hide-toggle');
+            if(chatModule.classList.contains('hidden-chat')) {
+                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+            } else {
+                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+            }
+        }
+
+        function handleProfileClick() {
+            if(isWalletConnected) {
+                showMobileView('profile');
+            } else {
+                toggleWallet(); 
+            }
+        }
+
+        // Initial Init
+        if(window.innerWidth <= 768) {
+            // Set initial mobile state
+        }
+        
+        // Default
+        document.getElementById('nav-markets').classList.add('active');
+        selectAsset('BTC');
+    </script>
+</body>
+</html>
+</html>

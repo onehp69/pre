@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerts | FLASH</title>
+    <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="brand">
+            FLASH <span>// TERMINAL</span>
+        </a>
+        
+        <div class="omnibar">
+            <span style="color:#555">🔍</span>
+            <input type="text" placeholder="Search markets, tickers, or events...">
+            <div class="kbd">/</div>
+        </div>
+
+        <div class="user-nav">
+            <a href="index.html">Markets</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="alerts.html" class="active">Alerts</a>
+            <a href="#">Account</a>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+            <h2 class="section-title" style="margin-bottom:0;">Real-Time Alerts</h2>
+            <div class="filter-row">
+                <div class="chip outline">Clear All</div>
+                <div class="chip selected">Configure Triggers</div>
+            </div>
+        </div>
+
+        <div class="card" style="padding:0; overflow:hidden;">
+            <!-- Header -->
+            <div class="alert-row">
+                <div></div>
+                <div>Market</div>
+                <div>Alert Type</div>
+                <div>Time</div>
+                <div style="text-align:right;">Impact</div>
+            </div>
+
+            <!-- Alert 1 -->
+            <a href="market.html" class="alert-row" style="text-decoration:none; color:inherit; transition:background 0.1s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='var(--bg-surface)'">
+                <div style="color:var(--blue);">●</div>
+                <div style="font-weight:500; color:white;">Fed Interest Rate Cut (Dec)</div>
+                <div><span class="badge rumor-sig" style="font-size:10px;">RUMOR ACTIVE</span></div>
+                <div style="font-family:'JetBrains Mono'; color:var(--text-sec);">23s ago</div>
+                <div style="text-align:right;"><span class="badge impact-high">HIGH</span></div>
+            </a>
+
+            <!-- Alert 2 -->
+            <a href="#" class="alert-row" style="text-decoration:none; color:inherit; transition:background 0.1s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='var(--bg-surface)'">
+                <div style="color:var(--text-ter);">●</div>
+                <div style="font-weight:500; color:white;">GPT-5 Release Date</div>
+                <div><span class="badge" style="color:#9E77ED; background:rgba(158, 119, 237, 0.15);">WHALE BUY</span></div>
+                <div style="font-family:'JetBrains Mono'; color:var(--text-sec);">2m ago</div>
+                <div style="text-align:right;"><span class="badge impact-med">MED</span></div>
+            </a>
+
+            <!-- Alert 3 -->
+            <a href="#" class="alert-row" style="text-decoration:none; color:inherit; transition:background 0.1s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='var(--bg-surface)'">
+                <div style="color:var(--text-ter);">●</div>
+                <div style="font-weight:500; color:white;">Bitcoin > $100k</div>
+                <div><span class="badge yes">NEWS BREAK</span></div>
+                <div style="font-family:'JetBrains Mono'; color:var(--text-sec);">14m ago</div>
+                <div style="text-align:right;"><span class="badge impact-high">HIGH</span></div>
+            </a>
+
+             <!-- Alert 4 -->
+             <a href="#" class="alert-row" style="text-decoration:none; color:inherit; transition:background 0.1s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='var(--bg-surface)'">
+                <div style="color:var(--text-ter);">●</div>
+                <div style="font-weight:500; color:white;">TikTok Ban Bill</div>
+                <div><span class="badge edge">ARBITRAGE</span></div>
+                <div style="font-family:'JetBrains Mono'; color:var(--text-sec);">1h ago</div>
+                <div style="text-align:right;"><span class="badge impact-med">LOW</span></div>
+            </a>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
+

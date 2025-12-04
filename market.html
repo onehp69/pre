@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fed Interest Rate Cut | FLASH</title>
+    <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="brand">
+            FLASH <span>// TERMINAL</span>
+        </a>
+        
+        <div class="omnibar">
+            <span style="color:#555">🔍</span>
+            <input type="text" placeholder="Search markets, tickers, or events...">
+            <div class="kbd">/</div>
+        </div>
+
+        <div class="user-nav">
+            <a href="index.html" class="active">Markets</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="alerts.html">Alerts</a>
+            <a href="#">Account</a>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        
+        <!-- Market Header / Top Panel -->
+        <div class="card market-header">
+            <div class="mh-info" style="flex: 1;">
+                <div class="mh-title">
+                    <h1>
+                        <div class="platform-dot p-poly" style="width:12px; height:12px;"></div>
+                        Fed Interest Rate Cut (Dec)
+                        <span class="intel-chip rumor" style="font-size: 11px; margin-left: 12px;">👁️ RUMOR ACTIVE</span>
+                    </h1>
+                    <div class="meta-tags" style="font-size:13px; margin-top:4px;">Polymarket • Macro • Expires Dec 18</div>
+                </div>
+                
+                <div class="mh-stats" style="margin-top: 20px;">
+                    <div class="mh-stat-item">
+                        <span>24h Vol</span>
+                        <span>$14.2M</span>
+                    </div>
+                    <div class="mh-stat-item">
+                        <span>Last Intel</span>
+                        <span style="color: var(--green);">23s ago</span>
+                    </div>
+                    <div class="mh-stat-item">
+                        <span>Sentiment</span>
+                        <span style="color: var(--red);">NO Lean (60%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="price-group" style="flex-direction: row; gap: 12px;">
+                <div class="price-block pb-yes" style="width: 100px; height: 60px;">
+                    <span class="lbl" style="font-size: 11px;">YES</span>
+                    <span class="val" style="font-size: 20px;">32¢</span>
+                </div>
+                <div class="price-block pb-no" style="width: 100px; height: 60px;">
+                    <span class="lbl" style="font-size: 11px;">NO</span>
+                    <span class="val" style="font-size: 20px;">68¢</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sentiment Bar -->
+        <div class="sentiment-bar-container" style="margin-bottom: 32px;">
+            <div class="sentiment-fill" style="width: 32%; background: var(--green);"></div> <!-- Mocking YES probability -->
+        </div>
+
+        <!-- Feed Filters -->
+        <div class="filter-row" style="margin-bottom: 20px;">
+            <div class="chip selected">All Signals</div>
+            <div class="chip outline">Bullish Only</div>
+            <div class="chip outline">Bearish Only</div>
+            <div class="chip outline">Whale Moves</div>
+            <div class="chip outline" style="color: var(--amber); border-color: var(--amber);">Rumors</div>
+            <div style="flex-grow:1"></div>
+            <div class="chip outline">Summarize Last 24h ✨</div>
+        </div>
+
+        <!-- Live Signals Feed -->
+        <div class="live-feed">
+
+            <!-- Item 1: Rumor -->
+            <div class="feed-card rumor-card">
+                <div class="feed-icon">👁️</div>
+                <div class="feed-content">
+                    <div class="feed-header">
+                        <span class="feed-source" style="color: var(--amber);">RUMOR SIGNAL • Strength 4/5</span>
+                        <span class="feed-time">23s ago</span>
+                    </div>
+                    <div class="feed-summary">
+                        <span class="ai-label">AI SUM //</span> Multiple local reporters in DC are hinting that the Fed chair might signal a pause in the upcoming presser, contradicting earlier cut expectations.
+                    </div>
+                    <div class="feed-badges">
+                        <span class="badge bearish">BEARISH RUMOR</span>
+                        <span class="badge impact-high">High Impact</span>
+                        <span class="badge edge">Early Signal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 2: Whale Move -->
+            <div class="feed-card">
+                <div class="feed-icon">🐋</div>
+                <div class="feed-content">
+                    <div class="feed-header">
+                        <span class="feed-source" style="color: #9E77ED;">Whale Activity</span>
+                        <span class="feed-time">2m ago</span>
+                    </div>
+                    <div class="feed-summary">
+                         <span class="ai-label">AI SUM //</span> Wallet 0x7a...3f sold $450k of "YES" shares. This wallet has a 78% win rate on Macro events.
+                    </div>
+                    <div class="feed-badges">
+                        <span class="badge bearish">BEARISH WHALE</span>
+                        <span class="badge impact-med">Med Impact</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 3: News -->
+            <div class="feed-card">
+                <div class="feed-icon">📰</div>
+                <div class="feed-content">
+                    <div class="feed-header">
+                        <span class="feed-source">Bloomberg Terminal</span>
+                        <span class="feed-time">14m ago</span>
+                    </div>
+                    <div class="feed-summary">
+                         <span class="ai-label">AI SUM //</span> US PPI comes in higher than expected (0.3% vs 0.1%), reducing likelihood of immediate rate relief.
+                    </div>
+                    <div class="feed-original">
+                        "Producer Price Index (PPI) rises 0.3% in November, exceeding forecasts."
+                    </div>
+                    <div class="feed-badges">
+                        <span class="badge bearish">BEARISH NEWS</span>
+                        <span class="badge impact-high">High Impact</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item 4: Social -->
+            <div class="feed-card">
+                <div class="feed-icon">🐦</div>
+                <div class="feed-content">
+                    <div class="feed-header">
+                        <span class="feed-source">X (Twitter) • @MacroAlf</span>
+                        <span class="feed-time">45m ago</span>
+                    </div>
+                    <div class="feed-summary">
+                         <span class="ai-label">AI SUM //</span> Analyst thread suggests market is overpricing the cut probability given recent inflation data.
+                    </div>
+                    <div class="feed-badges">
+                        <span class="badge" style="border:1px solid #333">Neutral Discussion</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

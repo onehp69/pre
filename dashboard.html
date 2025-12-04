@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | FLASH</title>
+    <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="brand">
+            FLASH <span>// TERMINAL</span>
+        </a>
+        
+        <div class="omnibar">
+            <span style="color:#555">🔍</span>
+            <input type="text" placeholder="Search markets, tickers, or events...">
+            <div class="kbd">/</div>
+        </div>
+
+        <div class="user-nav">
+            <a href="index.html">Markets</a>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="alerts.html">Alerts</a>
+            <a href="#">Account</a>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        
+        <h2 class="section-title">Command Center</h2>
+
+        <div class="dashboard-grid">
+            
+            <!-- Widget 1: Active Rumors -->
+            <div class="widget" style="grid-column: span 2;">
+                <h3>👁️ Active Rumors (High Confidence)</h3>
+                
+                <a href="market.html" class="market-row" style="margin-bottom: 8px;">
+                    <div class="col-icon"><div class="platform-dot p-poly"></div></div>
+                    <div class="col-title">
+                        <h3 style="font-size:14px;">Fed Rate Cut Dec</h3>
+                        <div class="meta-tags">RUMOR: Insider chatter on pause</div>
+                    </div>
+                    <div class="col-intel">
+                        <span class="intel-chip rumor">Strength 4/5</span>
+                    </div>
+                    <div class="price-group">
+                        <div class="price-block pb-yes" style="height:32px; width:60px;">
+                            <span class="val" style="font-size:13px;">32¢</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="#" class="market-row">
+                    <div class="col-icon"><div class="platform-dot p-kalshi"></div></div>
+                    <div class="col-title">
+                        <h3 style="font-size:14px;">Spotify Earnings Beat</h3>
+                        <div class="meta-tags">RUMOR: Leaked subscriber counts</div>
+                    </div>
+                    <div class="col-intel">
+                        <span class="intel-chip rumor">Strength 3/5</span>
+                    </div>
+                    <div class="price-group">
+                        <div class="price-block pb-yes" style="height:32px; width:60px;">
+                            <span class="val" style="font-size:13px;">78¢</span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- Widget 2: Upcoming Volatility -->
+            <div class="widget">
+                <h3>⚡ Volatility Windows</h3>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <div style="display:flex; justify-content:space-between; font-size:13px;">
+                        <span style="color:white;">CPI Data Release</span>
+                        <span style="color:var(--red);">In 14m</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:13px;">
+                        <span style="color:white;">FOMC Minutes</span>
+                        <span style="color:var(--amber);">Today 2:00 PM</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:13px;">
+                        <span style="color:white;">NVIDIA Earnings</span>
+                        <span style="color:var(--text-sec);">Tomorrow Aft</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Widget 3: Cross-Platform Arb -->
+            <div class="widget">
+                <h3>⚡ Arbitrage Opps</h3>
+                <div style="background: rgba(255,255,255,0.05); padding:12px; border-radius:6px; margin-bottom:12px;">
+                    <div style="font-size:12px; color:var(--text-sec); margin-bottom:4px;">US Election Winner</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="color:white; font-weight:600;">Poly 49¢ vs Kalshi 53¢</div>
+                        <span class="badge edge">4% Spread</span>
+                    </div>
+                </div>
+                <div style="background: rgba(255,255,255,0.05); padding:12px; border-radius:6px;">
+                    <div style="font-size:12px; color:var(--text-sec); margin-bottom:4px;">Bitcoin > 100k</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="color:white; font-weight:600;">Poly 64¢ vs Meta 59%</div>
+                        <span class="badge edge">5% Spread</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Widget 4: Global Sentiment -->
+            <div class="widget" style="grid-column: span 2;">
+                <h3>🌍 Global Sentiment Heatmap</h3>
+                <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
+                    <div style="background:var(--bg-hover); padding:12px; border-radius:6px; text-align:center;">
+                        <div style="font-size:11px; color:var(--text-sec); margin-bottom:8px;">CRYPTO</div>
+                        <div style="font-size:18px; color:var(--green); font-weight:bold;">Bullish</div>
+                    </div>
+                    <div style="background:var(--bg-hover); padding:12px; border-radius:6px; text-align:center;">
+                        <div style="font-size:11px; color:var(--text-sec); margin-bottom:8px;">MACRO</div>
+                        <div style="font-size:18px; color:var(--red); font-weight:bold;">Bearish</div>
+                    </div>
+                    <div style="background:var(--bg-hover); padding:12px; border-radius:6px; text-align:center;">
+                        <div style="font-size:11px; color:var(--text-sec); margin-bottom:8px;">POLITICS</div>
+                        <div style="font-size:18px; color:var(--text-ter); font-weight:bold;">Neutral</div>
+                    </div>
+                    <div style="background:var(--bg-hover); padding:12px; border-radius:6px; text-align:center;">
+                        <div style="font-size:11px; color:var(--text-sec); margin-bottom:8px;">TECH</div>
+                        <div style="font-size:18px; color:var(--green); font-weight:bold;">Bullish</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
+

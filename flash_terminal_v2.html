@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLASH | Pro Terminal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        :root {
+            /* PRO PALETTE */
+            --bg-body: #000000;
+            --bg-surface: #121212;
+            --bg-hover: #1E1E1E;
+            --line: #2A2A2A;
+
+            --text-main: #FFFFFF;
+            --text-sec: #888888;
+            --text-ter: #555555;
+
+            /* FINANCIAL COLORS (Matte, not Neon) */
+            --green: #27F599;
+            --green-dim: rgba(39, 245, 153, 0.1);
+            --red: #FF3B30;
+            --red-dim: rgba(255, 59, 48, 0.1);
+            --blue: #007AFF;
+            --amber: #FF9500;
+            
+            --radius: 8px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* --- 1. MINIMALIST NAV --- */
+        nav {
+            height: 56px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .brand {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+        .brand span { color: var(--text-sec); font-weight: 400; }
+
+        .omnibar {
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 8px 12px;
+            width: 400px;
+            color: white;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: border 0.2s;
+        }
+        .omnibar:focus-within { border-color: var(--text-sec); }
+        .omnibar input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            width: 100%;
+            font-family: 'Inter';
+        }
+        .kbd {
+            font-size: 10px;
+            color: var(--text-ter);
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            padding: 2px 4px;
+        }
+
+        .user-nav { display: flex; gap: 24px; font-size: 13px; font-weight: 500; color: var(--text-sec); }
+        .user-nav a { color: var(--text-sec); text-decoration: none; transition: color 0.2s; cursor: pointer; }
+        .user-nav a:hover, .user-nav a.active { color: white; }
+
+        /* --- 2. SUB-NAV / FILTERS --- */
+        .subheader {
+            margin-top: 56px;
+            padding: 24px 24px 12px 24px;
+            background: var(--bg-body);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* The Tabs (Kalshi Style) */
+        .tabs-row {
+            display: flex;
+            gap: 24px;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 0;
+        }
+
+        .tab {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-sec);
+            padding-bottom: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+            text-decoration: none;
+        }
+
+        .tab:hover { color: white; }
+        .tab.active { color: white; }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: white;
+        }
+
+        /* The Pills (Sub-filters) */
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .chip {
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: var(--bg-surface);
+            color: var(--text-sec);
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .chip:hover { background: var(--bg-hover); color: white; }
+        .chip.selected { background: white; color: black; }
+        .chip.outline { background: transparent; border: 1px solid var(--line); }
+
+        /* --- 3. MARKET GRID (THE SCANNER) --- */
+        .market-table {
+            padding: 12px 24px 60px 24px;
+        }
+
+        /* Table Headers */
+        .grid-header {
+            display: grid;
+            grid-template-columns: 28px 4fr 1.5fr 2fr 2fr; /* Icon | Market | Volume | Intel | Prices */
+            padding: 12px 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-ter);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* The Market Row */
+        .market-row {
+            display: grid;
+            grid-template-columns: 28px 4fr 1.5fr 2fr 2fr;
+            align-items: center;
+            padding: 16px;
+            border-radius: var(--radius);
+            background: var(--bg-surface);
+            margin-bottom: 8px; /* Spacing between rows */
+            transition: background 0.1s, transform 0.1s;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .market-row:hover {
+            background: var(--bg-hover);
+            border-color: #333;
+        }
+
+        /* Column Styles */
+        .col-icon {
+            display: flex;
+            align-items: center;
+        }
+        .platform-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+        .p-poly { background: #2E90FA; }
+        .p-kalshi { background: #27F599; }
+        .p-meta { background: #9E77ED; }
+
+        .col-title h3 {
+            font-size: 15px;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 4px;
+        }
+        .meta-tags {
+            font-size: 12px;
+            color: var(--text-sec);
+            display: flex;
+            gap: 8px;
+        }
+
+        .col-vol {
+            font-family: 'JetBrains Mono';
+            font-size: 13px;
+            color: var(--text-sec);
+        }
+
+        /* INTEL CHIPS (Clean & Matte) */
+        .intel-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #222;
+            color: #ccc;
+        }
+        .intel-chip.rumor {
+            background: rgba(255, 149, 0, 0.15);
+            color: var(--amber);
+        }
+        .intel-chip.news {
+            background: rgba(0, 122, 255, 0.15);
+            color: var(--blue);
+        }
+        .intel-chip.whale {
+            background: rgba(158, 119, 237, 0.15);
+            color: #9E77ED;
+        }
+
+        /* PRICE BLOCKS (Order Book Style) */
+        .price-group {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .price-block {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 44px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono';
+            transition: filter 0.2s;
+        }
+
+        .pb-yes {
+            background: var(--green-dim);
+            color: var(--green);
+        }
+        .pb-yes:hover { background: rgba(39, 245, 153, 0.2); }
+
+        .pb-no {
+            background: var(--red-dim);
+            color: var(--red);
+        }
+        .pb-no:hover { background: rgba(255, 59, 48, 0.2); }
+
+        .val { font-size: 15px; font-weight: 600; }
+        .lbl { font-size: 9px; opacity: 0.7; font-weight: 500; }
+
+        /* Floating Badge for New Items */
+        .new-count {
+            width: 16px;
+            height: 16px;
+            background: var(--blue);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 6px;
+        }
+
+        /* --- UTILS FOR NEW PAGES --- */
+        .page-container {
+            padding: 80px 24px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+
+        /* --- MARKET LIVE FEED SPECIFIC --- */
+
+        .market-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .mh-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mh-stats {
+            display: flex;
+            gap: 24px;
+            font-size: 13px;
+            color: var(--text-sec);
+        }
+
+        .mh-stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .mh-stat-item span:first-child { font-size: 11px; color: var(--text-ter); text-transform: uppercase; font-weight: 600; }
+        .mh-stat-item span:last-child { color: white; font-family: 'JetBrains Mono'; }
+
+        .sentiment-bar-container {
+            height: 4px;
+            background: var(--bg-hover);
+            border-radius: 2px;
+            margin-top: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .sentiment-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green) 0%, var(--red) 100%);
+            width: 60%; /* Mock value */
+            border-radius: 2px;
+        }
+
+        .live-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .feed-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 16px;
+            display: flex;
+            gap: 16px;
+            transition: border 0.2s;
+        }
+        .feed-card:hover { border-color: var(--text-sec); }
+
+        .feed-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-hover);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .feed-content {
+            flex: 1;
+        }
+
+        .feed-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+        .feed-source { color: var(--text-sec); font-weight: 500; }
+        .feed-time { color: var(--text-ter); font-family: 'JetBrains Mono'; }
+
+        .feed-summary {
+            color: white;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .ai-label {
+            color: var(--blue);
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 6px;
+            display: inline-block;
+            letter-spacing: 0.5px;
+        }
+
+        .feed-original {
+            font-size: 12px;
+            color: var(--text-ter);
+            border-left: 2px solid var(--line);
+            padding-left: 8px;
+            margin-bottom: 12px;
+        }
+
+        .feed-badges {
+            display: flex;
+            gap: 8px;
+        }
+
+        .badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.impact-high { background: rgba(255, 59, 48, 0.2); color: var(--red); }
+        .badge.impact-med { background: rgba(255, 149, 0, 0.2); color: var(--amber); }
+        .badge.edge { background: rgba(0, 122, 255, 0.2); color: var(--blue); }
+        .badge.yes { background: rgba(39, 245, 153, 0.2); color: var(--green); }
+        .badge.bearish { background: rgba(255, 59, 48, 0.1); color: var(--red); }
+
+        .rumor-card {
+            border: 1px solid rgba(255, 149, 0, 0.3);
+            background: rgba(255, 149, 0, 0.05);
+        }
+        .rumor-card .badge.rumor-sig { background: var(--amber); color: black; }
+
+        /* --- DASHBOARD WIDGETS --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .widget {
+            background: var(--bg-surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 20px;
+            min-height: 200px;
+        }
+        .widget h3 {
+            font-size: 14px;
+            color: var(--text-sec);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- ALERTS PAGE --- */
+        .alert-row {
+            display: grid;
+            grid-template-columns: 40px 2fr 1fr 1fr 1fr;
+            align-items: center;
+            padding: 16px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--line);
+            font-size: 13px;
+        }
+        .alert-row:first-child {
+            background: transparent;
+            color: var(--text-ter);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        /* --- MODERN SIGNALS (Clean, Dot Style) --- */
+        .signal-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 6px 0; /* Minimal vertical padding */
+        }
+
+        .s-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            box-shadow: 0 0 8px currentColor; /* Subtle glow based on text color */
+        }
+
+        .s-bullish {
+            color: var(--green);
+        }
+        .s-bullish .s-dot { background-color: var(--green); }
+
+        .s-bearish {
+            color: var(--red);
+        }
+        .s-bearish .s-dot { background-color: var(--red); }
+
+        .s-neutral {
+            color: var(--text-ter);
+        }
+        .s-neutral .s-dot { background-color: var(--text-ter); box-shadow: none; }
+        
+        /* Utility */
+        .hidden { display: none !important; }
+        .flash-effect { color: white !important; transition: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Navigation -->
+    <nav>
+        <div class="brand" onclick="showView('markets')">
+            FLASH <span>// TERMINAL</span>
+        </div>
+        
+        <div class="omnibar">
+            <span style="color:#555">🔍</span>
+            <input type="text" placeholder="Search markets, tickers, or events...">
+            <div class="kbd">/</div>
+        </div>
+
+        <div class="user-nav">
+            <a id="nav-markets" onclick="showView('markets')" class="active">Markets</a>
+            <a id="nav-dashboard" onclick="showView('dashboard')">Dashboard</a>
+            <a id="nav-alerts" onclick="showView('alerts')">Alerts</a>
+            <a href="#">Account</a>
+        </div>
+    </nav>
+
+    <!-- VIEW 1: MARKETS -->
+    <div id="view-markets" class="view-section">
+        
+        <!-- Filters & Controls -->
+        <div class="subheader">
+            <!-- Platform Tabs -->
+            <div class="tabs-row">
+                <div class="tab active">All Markets</div>
+                <div class="tab">Polymarket</div>
+                <div class="tab">Kalshi</div>
+                <div class="tab">Manifold</div>
+                <div class="tab">Metaculus</div>
+            </div>
+
+            <!-- Filter Chips -->
+            <div class="filter-row">
+                <div class="chip selected">Trending</div>
+                <div class="chip outline">Politics</div>
+                <div class="chip outline">Crypto</div>
+                <div class="chip outline">Economics</div>
+                <div class="chip outline">Science</div>
+                <div style="flex-grow:1"></div>
+                <div class="chip outline" style="font-family:'JetBrains Mono'">Sort: Volatility ▾</div>
+            </div>
+        </div>
+
+        <!-- The Market Scanner -->
+        <div class="market-table">
+            
+            <!-- Headers -->
+            <div class="grid-header">
+                <div>Src</div>
+                <div>Market Name</div>
+                <div>24h Vol</div>
+                <div>Signal</div>
+                <div style="text-align:right">Order Book</div>
+            </div>
+
+            <!-- Row 1: High Priority Rumor (Bearish for 'Cut') -->
+            <a onclick="showDetail('fed')" class="market-row">
+                <div class="col-icon"><div class="platform-dot p-poly"></div></div>
+                <div class="col-title">
+                    <h3>Fed Interest Rate Cut (Dec)</h3>
+                    <div class="meta-tags">Expires Dec 18 • Macro</div>
+                </div>
+                <div class="col-vol live-vol">$14.2M</div>
+                <div class="col-intel">
+                    <div class="signal-pill s-bearish">
+                        <span class="s-dot"></span> BEARISH
+                    </div>
+                </div>
+                <div class="price-group">
+                    <div class="price-block pb-yes">
+                        <span class="lbl">YES</span>
+                        <span class="val live-price" data-base="32">32¢</span>
+                    </div>
+                    <div class="price-block pb-no">
+                        <span class="lbl">NO</span>
+                        <span class="val live-price" data-base="68">68¢</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Row 2: Standard News (Bullish) -->
+            <a onclick="showDetail('btc')" class="market-row">
+                <div class="col-icon"><div class="platform-dot p-kalshi"></div></div>
+                <div class="col-title">
+                    <h3>Bitcoin > $100k in 2024</h3>
+                    <div class="meta-tags">Expires Dec 31 • Crypto</div>
+                </div>
+                <div class="col-vol live-vol">$8.5M</div>
+                <div class="col-intel">
+                    <div class="signal-pill s-bullish">
+                        <span class="s-dot"></span> BULLISH
+                    </div>
+                </div>
+                <div class="price-group">
+                    <div class="price-block pb-yes">
+                        <span class="lbl">YES</span>
+                        <span class="val live-price" data-base="64">64¢</span>
+                    </div>
+                    <div class="price-block pb-no">
+                        <span class="lbl">NO</span>
+                        <span class="val live-price" data-base="36">36¢</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Row 3: Whale Activity (Bullish) -->
+            <a onclick="showDetail('gpt')" class="market-row">
+                <div class="col-icon"><div class="platform-dot p-meta"></div></div>
+                <div class="col-title">
+                    <h3>GPT-5 Release Date: Q1 2025?</h3>
+                    <div class="meta-tags">Expires Mar 30 • Tech</div>
+                </div>
+                <div class="col-vol live-vol">$240K</div>
+                <div class="col-intel">
+                    <div class="signal-pill s-bullish">
+                        <span class="s-dot"></span> BULLISH
+                    </div>
+                </div>
+                <div class="price-group">
+                    <div class="price-block pb-yes">
+                        <span class="lbl">YES</span>
+                        <span class="val live-price" data-base="12" data-suffix="%">12%</span>
+                    </div>
+                    <div class="price-block pb-no">
+                        <span class="lbl">NO</span>
+                        <span class="val live-price" data-base="88" data-suffix="%">88%</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Row 4: No Signals (Neutral) -->
+            <a onclick="showDetail('election')" class="market-row">
+                <div class="col-icon"><div class="platform-dot p-poly"></div></div>
+                <div class="col-title">
+                    <h3>US Election Winner 2024</h3>
+                    <div class="meta-tags">Expires Nov 5 • Politics</div>
+                </div>
+                <div class="col-vol live-vol">$105M</div>
+                <div class="col-intel">
+                    <div class="signal-pill s-neutral">
+                        <span class="s-dot"></span> NEUTRAL
+                    </div>
+                </div>
+                <div class="price-group">
+                    <div class="price-block pb-yes">
+                        <span class="lbl">YES</span>
+                        <span class="val live-price" data-base="49">49¢</span>
+                    </div>
+                    <div class="price-block pb-no">
+                        <span class="lbl">NO</span>
+                        <span class="val live-price" data-base="51">51¢</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Row 5: Arbitrage (Neutral/Edge) -->
+            <a onclick="showDetail('tiktok')" class="market-row">
+                <div class="col-icon"><div class="platform-dot p-kalshi"></div></div>
+                <div class="col-title">
+                    <h3>TikTok Ban Bill Passed?</h3>
+                    <div class="meta-tags">Expires Jan 20 • Law</div>
+                </div>
+                <div class="col-vol live-vol">$1.2M</div>
+                <div class="col-intel">
+                     <div class="signal-pill s-neutral">
+                        <span class="s-dot"></span> NEUTRAL
+                    </div>
+                </div>
+                <div class="price-group">
+                    <div class="price-block pb-yes">
+                        <span class="lbl">YES</span>
+                        <span class="val live-price" data-base="75">75¢</span>
+                    </div>
+                    <div class="price-block pb-no">
+                        <span class="lbl">NO</span>
+                        <span class="val live-price" data-base="25">25¢</span>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- VIEW 2: DASHBOARD -->
+    <div id="view-dashboard" class="view-section hidden">
+        <div class="page-container">
+            
+            <h2 class="section-title">Command Center</h2>
+
+            <div class="dashboard-grid">
+                
+                <!-- Widget 1: Active Rumors -->
+                <div class="widget" style="grid-column: span 2;">
+                    <h3>👁️ Active Rumors (High Confidence)</h3>
+                    
+                    <div onclick="showDetail('fed')" class="market-row" style="margin-bottom: 8px; cursor:pointer;">
+                        <div class="col-icon"><div class="platform-dot p-poly"></div></div>
+                        <div class="col-title">
+                            <h3 style="font-size:14px;">Fed Rate Cut Dec</h3>
+                            <div class="meta-tags">RUMOR: Insider chatter on pause</div>
+                        </div>
+                        <div class="col-intel">
+                            <span class="intel-chip rumor">Strength 4/5</span>
+                        </div>
+                        <div class="price-group">
+                            <div class="price-block pb-yes" style="height:32px; width:60px;">
+                                <span class="val live-price" data-base="32" style="font-size:13px;">32¢</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="market-row" style="cursor:pointer;">
+                        <div class="col-icon"><div class="platform-dot p-kalshi"></div></div>
+                        <div class="col-title">
+                            <h3 style="font-size:14px;">Spotify Earnings Beat</h3>
+                            <div class="meta-tags">RUMOR: Leaked subscriber counts</div>
+                        </div>
+                        <div class="col-intel">
+                            <span class="intel-chip rumor">Strength 3/5</span>
+                        </div>
+                        <div class="price-group">
+                            <div class="price-block pb-yes" style="height:32px; width:60px;">
+                                <span class="val live-price" data-base="78" style="font-size:13px;">78¢</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Widget 2: Upcoming Volatility -->
+                <div class="widget">
+                    <h3>⚡ Volatility Windows</h3>
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <div style="display:flex; justify-content:space-between; font-size:13px;">
+                            <span style="color:white;">CPI Data Release</span>
+                            <span style="color:var(--red);">In 14m</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px;">
+                            <span style="color:white;">FOMC Minutes</span>
+                            <span style="color:var(--amber);">Today 2:00 PM</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px;">
+                            <span style="color:white;">NVIDIA Earnings</span>
+                            <span style="color:var(--text-sec);">Tomorrow Aft</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget 3: Cross-Platform Arb -->
+                <div class="widget">
+                    <h3>⚡ Arbitrage Opps</h3>
+                    <div style="background: rgba(255,255,255,0.05); padding:12px; border-radius:6px; margin-bottom:12px;">
+                        <div style="font-size:12px; color:var(--text-sec); margin-bottom:4px;">US Election Winner</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="color:white; font-weight:600;">Poly 49¢ vs Kalshi 53¢</div>
+                            <span class="badge edge">4% Spread</span>
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.05); padding:12px; border-radius:6px;">
+                        <div style="font-size:12px; color:var(--text-sec); margin-bottom:4px;">Bitcoin > 100k</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="color:white; font-weight:600;">Poly 64¢ vs Meta 59%</div>
+                            <span class="badge edge">5% Spread</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Widget 4: Global Sentiment -->
+                <div class="widget" style="grid-column: span 2;">
+                    <h3>🌍 Global Sentiment Heatmap</h3>
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
+                        <div style="background:var(--bg-hover); padding:12px; border-radius:6px; text-align:center;">
+                            <div style="font-size:11px; color:var(--text-sec); margin-bottom:8px;">CRYPTO</div>
+                            <div style="font-size:18px; color:var(--green); font-weight:bold;">Bullish</div>
+                        </div>
+                        <div style="background:var(--bg-hover); padding:12px; border-radius:6px; text-align:center;">
+                            <div style="font-size:11px; color:var(--text-sec); margin-bottom:8px;">MACRO</div>
+                            <div style="font-size:18px; color:var(--red); font-weight:bold;">Bearish</div>
+                        </div>
+                        <div style="background:var(--bg-hover); padding:12px; border-radius:6px; text-align:center;">
+                            <div style="font-size:11px; color:var(--text-sec); margin-bottom:8px;">POLITICS</div>
+                            <div style="font-size:18px; color:var(--text-ter); font-weight:bold;">Neutral</div>
+                        </div>
+                        <div style="background:var(--bg-hover); padding:12px; border-radius:6px; text-align:center;">
+                            <div style="font-size:11px; color:var(--text-sec); margin-bottom:8px;">TECH</div>
+                            <div style="font-size:18px; color:var(--green); font-weight:bold;">Bullish</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 3: ALERTS -->
+    <div id="view-alerts" class="view-section hidden">
+        <div class="page-container">
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h2 class="section-title" style="margin-bottom:0;">Real-Time Alerts</h2>
+                <div class="filter-row">
+                    <div class="chip outline">Clear All</div>
+                    <div class="chip selected">Configure Triggers</div>
+                </div>
+            </div>
+
+            <div class="card" style="padding:0; overflow:hidden;">
+                <!-- Header -->
+                <div class="alert-row">
+                    <div></div>
+                    <div>Market</div>
+                    <div>Alert Type</div>
+                    <div>Time</div>
+                    <div style="text-align:right;">Impact</div>
+                </div>
+
+                <!-- Alert 1 -->
+                <a onclick="showDetail('fed')" class="alert-row" style="text-decoration:none; color:inherit; transition:background 0.1s; cursor:pointer;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='var(--bg-surface)'">
+                    <div style="color:var(--blue);">●</div>
+                    <div style="font-weight:500; color:white;">Fed Interest Rate Cut (Dec)</div>
+                    <div><span class="badge rumor-sig" style="font-size:10px;">RUMOR ACTIVE</span></div>
+                    <div style="font-family:'JetBrains Mono'; color:var(--text-sec);">23s ago</div>
+                    <div style="text-align:right;"><span class="badge impact-high">HIGH</span></div>
+                </a>
+
+                <!-- Alert 2 -->
+                <a onclick="showDetail('gpt')" class="alert-row" style="text-decoration:none; color:inherit; transition:background 0.1s; cursor:pointer;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='var(--bg-surface)'">
+                    <div style="color:var(--text-ter);">●</div>
+                    <div style="font-weight:500; color:white;">GPT-5 Release Date</div>
+                    <div><span class="badge" style="color:#9E77ED; background:rgba(158, 119, 237, 0.15);">WHALE BUY</span></div>
+                    <div style="font-family:'JetBrains Mono'; color:var(--text-sec);">2m ago</div>
+                    <div style="text-align:right;"><span class="badge impact-med">MED</span></div>
+                </a>
+
+                <!-- Alert 3 -->
+                <a onclick="showDetail('btc')" class="alert-row" style="text-decoration:none; color:inherit; transition:background 0.1s; cursor:pointer;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='var(--bg-surface)'">
+                    <div style="color:var(--text-ter);">●</div>
+                    <div style="font-weight:500; color:white;">Bitcoin > $100k</div>
+                    <div><span class="badge yes">NEWS BREAK</span></div>
+                    <div style="font-family:'JetBrains Mono'; color:var(--text-sec);">14m ago</div>
+                    <div style="text-align:right;"><span class="badge impact-high">HIGH</span></div>
+                </a>
+
+                 <!-- Alert 4 -->
+                 <a onclick="showDetail('tiktok')" class="alert-row" style="text-decoration:none; color:inherit; transition:background 0.1s; cursor:pointer;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='var(--bg-surface)'">
+                    <div style="color:var(--text-ter);">●</div>
+                    <div style="font-weight:500; color:white;">TikTok Ban Bill</div>
+                    <div><span class="badge edge">ARBITRAGE</span></div>
+                    <div style="font-family:'JetBrains Mono'; color:var(--text-sec);">1h ago</div>
+                    <div style="text-align:right;"><span class="badge impact-med">LOW</span></div>
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- VIEW 4: MARKET DETAIL (Generic Template for Demo) -->
+    <div id="view-detail" class="view-section hidden">
+        <div class="page-container">
+            <!-- Back Button -->
+            <div style="margin-bottom: 20px;">
+                <div onclick="showView('markets')" class="chip outline" style="display:inline-block; padding: 8px 16px;">← Back to Markets</div>
+            </div>
+            
+            <!-- Market Header / Top Panel -->
+            <div class="card market-header">
+                <div class="mh-info" style="flex: 1;">
+                    <div class="mh-title">
+                        <h1>
+                            <div class="platform-dot p-poly" style="width:12px; height:12px;"></div>
+                            <span id="detail-title">Fed Interest Rate Cut (Dec)</span>
+                            <span class="intel-chip rumor" style="font-size: 11px; margin-left: 12px;">👁️ RUMOR ACTIVE</span>
+                        </h1>
+                        <div class="meta-tags" style="font-size:13px; margin-top:4px;">Polymarket • Macro • Expires Dec 18</div>
+                    </div>
+                    
+                    <div class="mh-stats" style="margin-top: 20px;">
+                        <div class="mh-stat-item">
+                            <span>24h Vol</span>
+                            <span>$14.2M</span>
+                        </div>
+                        <div class="mh-stat-item">
+                            <span>Last Intel</span>
+                            <span style="color: var(--green);">23s ago</span>
+                        </div>
+                        <div class="mh-stat-item">
+                            <span>Sentiment</span>
+                            <span style="color: var(--red);">NO Lean (60%)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="price-group" style="flex-direction: row; gap: 12px;">
+                    <div class="price-block pb-yes" style="width: 100px; height: 60px;">
+                        <span class="lbl" style="font-size: 11px;">YES</span>
+                        <span class="val live-price" data-base="32" style="font-size: 20px;">32¢</span>
+                    </div>
+                    <div class="price-block pb-no" style="width: 100px; height: 60px;">
+                        <span class="lbl" style="font-size: 11px;">NO</span>
+                        <span class="val live-price" data-base="68" style="font-size: 20px;">68¢</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sentiment Bar -->
+            <div class="sentiment-bar-container" style="margin-bottom: 32px;">
+                <div class="sentiment-fill" style="width: 32%; background: var(--green);"></div> <!-- Mocking YES probability -->
+            </div>
+
+            <!-- Feed Filters -->
+            <div class="filter-row" style="margin-bottom: 20px;">
+                <div class="chip selected">All Signals</div>
+                <div class="chip outline">Bullish Only</div>
+                <div class="chip outline">Bearish Only</div>
+                <div class="chip outline">Whale Moves</div>
+                <div class="chip outline" style="color: var(--amber); border-color: var(--amber);">Rumors</div>
+                <div style="flex-grow:1"></div>
+                <div class="chip outline">Summarize Last 24h ✨</div>
+            </div>
+
+            <!-- Live Signals Feed -->
+            <div class="live-feed">
+
+                <!-- Item 1: Rumor -->
+                <div class="feed-card rumor-card">
+                    <div class="feed-icon">👁️</div>
+                    <div class="feed-content">
+                        <div class="feed-header">
+                            <span class="feed-source" style="color: var(--amber);">RUMOR SIGNAL • Strength 4/5</span>
+                            <span class="feed-time">23s ago</span>
+                        </div>
+                        <div class="feed-summary">
+                            <span class="ai-label">AI SUM //</span> Multiple local reporters in DC are hinting that the Fed chair might signal a pause in the upcoming presser, contradicting earlier cut expectations.
+                        </div>
+                        <div class="feed-badges">
+                            <span class="badge bearish">BEARISH RUMOR</span>
+                            <span class="badge impact-high">High Impact</span>
+                            <span class="badge edge">Early Signal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2: Whale Move -->
+                <div class="feed-card">
+                    <div class="feed-icon">🐋</div>
+                    <div class="feed-content">
+                        <div class="feed-header">
+                            <span class="feed-source" style="color: #9E77ED;">Whale Activity</span>
+                            <span class="feed-time">2m ago</span>
+                        </div>
+                        <div class="feed-summary">
+                             <span class="ai-label">AI SUM //</span> Wallet 0x7a...3f sold $450k of "YES" shares. This wallet has a 78% win rate on Macro events.
+                        </div>
+                        <div class="feed-badges">
+                            <span class="badge bearish">BEARISH WHALE</span>
+                            <span class="badge impact-med">Med Impact</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3: News -->
+                <div class="feed-card">
+                    <div class="feed-icon">📰</div>
+                    <div class="feed-content">
+                        <div class="feed-header">
+                            <span class="feed-source">Bloomberg Terminal</span>
+                            <span class="feed-time">14m ago</span>
+                        </div>
+                        <div class="feed-summary">
+                             <span class="ai-label">AI SUM //</span> US PPI comes in higher than expected (0.3% vs 0.1%), reducing likelihood of immediate rate relief.
+                        </div>
+                        <div class="feed-original">
+                            "Producer Price Index (PPI) rises 0.3% in November, exceeding forecasts."
+                        </div>
+                        <div class="feed-badges">
+                            <span class="badge bearish">BEARISH NEWS</span>
+                            <span class="badge impact-high">High Impact</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Navigation Logic
+        function showView(viewName) {
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            
+            // Deactivate all nav links
+            document.querySelectorAll('.user-nav a').forEach(el => el.classList.remove('active'));
+
+            // Show selected view
+            if (viewName === 'fed' || viewName === 'btc' || viewName === 'gpt' || viewName === 'election' || viewName === 'tiktok') {
+                // Should technically be 'detail', handled by showDetail
+                showDetail(viewName);
+                return;
+            }
+
+            const targetView = document.getElementById('view-' + viewName);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                window.scrollTo(0,0);
+            }
+
+            // Activate nav link if exists
+            const navLink = document.getElementById('nav-' + viewName);
+            if (navLink) {
+                navLink.classList.add('active');
+            }
+        }
+
+        // Simple detail view switcher (Populates title based on ID)
+        function showDetail(marketId) {
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            // Show detail view
+            document.getElementById('view-detail').classList.remove('hidden');
+            window.scrollTo(0,0);
+
+            // Simple mock data injection
+            const titles = {
+                'fed': "Fed Interest Rate Cut (Dec)",
+                'btc': "Bitcoin > $100k in 2024",
+                'gpt': "GPT-5 Release Date: Q1 2025?",
+                'election': "US Election Winner 2024",
+                'tiktok': "TikTok Ban Bill Passed?"
+            };
+
+            const titleEl = document.getElementById('detail-title');
+            if (titles[marketId]) {
+                titleEl.innerText = titles[marketId];
+            }
+        }
+
+        // Live Data Simulation
+        function updatePrices() {
+            const priceElements = document.querySelectorAll('.live-price');
+            
+            priceElements.forEach(el => {
+                // 30% chance to update
+                if (Math.random() > 0.7) {
+                    const base = parseInt(el.getAttribute('data-base'));
+                    const suffix = el.getAttribute('data-suffix') || '¢';
+                    
+                    // Fluctuate by -1, 0, or +1
+                    const change = Math.floor(Math.random() * 3) - 1;
+                    let newVal = base + change;
+                    
+                    // Clamp (0-99)
+                    if (newVal < 1) newVal = 1;
+                    if (newVal > 99) newVal = 99;
+
+                    // Update DOM and Attribute
+                    el.innerText = newVal + suffix;
+                    el.setAttribute('data-base', newVal);
+                    
+                    // Visual flash effect
+                    el.style.color = change > 0 ? 'var(--green)' : (change < 0 ? 'var(--red)' : 'white');
+                    setTimeout(() => {
+                        el.style.color = ''; // Reset to default CSS color
+                    }, 300);
+                }
+            });
+        }
+
+        // Run simulation every 2 seconds
+        setInterval(updatePrices, 2000);
+
+        // Default View
+        // showView('markets'); // Already visible by default HTML structure, but good practice.
+    </script>
+</body>
+</html>
+
